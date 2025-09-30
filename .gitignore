@@ -1,0 +1,18 @@
+# CMake build folders
+/cmake-build-*/
+/build/
+
+# CLion project files
+.idea/
+
+# VSCode project files
+.vscode/
+
+# compiled files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
