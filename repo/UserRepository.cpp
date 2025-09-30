@@ -60,7 +60,7 @@ void UserRepository::save() {
         out << user -> getId() << ';'
             << user -> getName() << ';'
             << user -> getEmail() << ';'
-            << user -> gethashedPassword()
+            << user -> gethashedPassword().
             << '\n';
     }
 }
