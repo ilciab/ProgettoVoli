@@ -29,7 +29,7 @@ std::optional<unsigned int> AuthService::login(const std::string& email, const s
 std::optional<unsigned int> AuthService::signIn(const std::string & name , const std::string & email, const std::string & password) {
     if (repo.getUserbyEmail(email) != nullptr) //esiste già un utente con quella mail
         return std::nullopt;
-    return repo.createUser(name, email,hashPassword(password));;
+    return repo.createClient(name, email,hashPassword(password));;
 }
 
 

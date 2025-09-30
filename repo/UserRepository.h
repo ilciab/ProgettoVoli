@@ -23,7 +23,7 @@ public:
     void load() override;
     void save() override;
     void add(const User&) override;
-    unsigned int createUser(const std::string&, const std::string&, const std::string&);
+    unsigned int createClient(const std::string&, const std::string&, const std::string&);
     void remove(int id) override;
     const User* getUserbyEmail(const std::string& email);
     std::vector<User> getAll() override;

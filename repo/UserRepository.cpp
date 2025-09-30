@@ -9,6 +9,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "../domain/Client.h"
+
 
 UserRepository::UserRepository(const std::string &path) {
     this->path = path;
@@ -71,9 +73,9 @@ const User* UserRepository::getUserbyEmail(const std::string& email) {
     return nullptr;
 }
 
-unsigned int UserRepository::createUser(const std::string & name, const std::string & email, const std::string & hashedPassword) {
+unsigned int UserRepository::createClient(const std::string & name, const std::string & email, const std::string & hashedPassword) {
     unsigned int id = idGen.getNextId();
-    users.emplace_back(std::make_unique<User>(id,name,email,hashedPassword));
+    users.emplace_back(std::make_unique<Client>(id,name,email,hashedPassword));
     return id;
 }
 
