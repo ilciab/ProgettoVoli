@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "RepositoryInterface.h"
-#include "../domain/User.h"
+#include "../domain/Customer.h"
 #include "../util/IdGenerator.h"
 
 
@@ -15,15 +15,15 @@ class UserRepository : public RepositoryInterface<User> {
 
 private:
         std::vector<std::unique_ptr<User>> users;
-        std::string path;
+        std::string customerPath, adminPath;
         IdGenerator idGen;
 public:
-    UserRepository(const std::string&);
+    UserRepository(const std::string&, const std::string&);
 
     void load() override;
-    void save() override;
+    void write() override;
     void add(const User&) override;
-    unsigned int createClient(const std::string&, const std::string&, const std::string&);
+    unsigned int createCustomer(const std::string&, const std::string&, const std::string&, const CustomerLevel& customerLevel);
     void remove(int id) override;
     const User* getUserbyEmail(const std::string& email);
     std::vector<User> getAll() override;

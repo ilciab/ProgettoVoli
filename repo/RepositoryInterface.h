@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "../domain/User.h"
-#include "../util/idGenerator.h"
+#include "../util/IdGenerator.h"
 
 
 template <typename T>
@@ -21,7 +21,7 @@ public:
     virtual unsigned int* getById(int id) = 0;
     virtual void remove(int id) = 0;
     virtual void add(const T&) = 0;
-    virtual void save() = 0;
+    virtual void write() = 0;
     virtual void load() = 0;
 
     virtual ~RepositoryInterface() = default;

@@ -1,0 +1,10 @@
+//
+// Created by ilciab on 11/14/25.
+//
+
+#ifndef PROGETTOVOLI_CUSTOMERLEVEL_H
+#define PROGETTOVOLI_CUSTOMERLEVEL_H
+
+#endif //PROGETTOVOLI_CUSTOMERLEVEL_H
+
+enum class CustomerLevel {BRONZE, SILVER,GOLD};

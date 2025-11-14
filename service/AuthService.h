@@ -17,7 +17,6 @@ class AuthService {
         std::string hashPassword(const std::string&);
 
         void close();
-
         explicit AuthService(UserRepository&);
 };
 

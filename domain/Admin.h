@@ -7,10 +7,19 @@
 #include "User.h"
 
 
-class Admin : User {
+class Admin : public User {
 
+private:
+    AdminLevel level;
+
+
+public:
+    UserRole getRole() const override {return UserRole::Admin;}
+
+    Admin(const unsigned int &id, const std::string& name, const std::string& email, const std::string& hashedPassword)
+    : User(id, name, email, hashedPassword) {}
+    
 };
-
 
 
 #endif //ADMIN_H

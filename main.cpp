@@ -11,7 +11,7 @@ bool signIn(){
 
 
 int main() {
-    UserRepository userRepo(std::string("users.txt"));
+    UserRepository userRepo(std::string("users.txt"), std::string("admins.txt"));
     AuthService authService(userRepo);
     CLI cli(authService);
     cli.menu();

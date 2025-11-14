@@ -4,7 +4,6 @@
 
 #include "AuthService.h"
 
-#include <iostream>
 
 
 AuthService::AuthService(UserRepository& repo) : repo(repo) {}
@@ -18,7 +17,7 @@ std::optional<unsigned int> AuthService::login(const std::string& email, const s
         return std::nullopt;
     }
 
-    if (user->gethashedPassword() == hashedPassword)
+    if (user->getHashedPassword() == hashedPassword)
         return user->getId();
 
     return std::nullopt;
@@ -27,9 +26,10 @@ std::optional<unsigned int> AuthService::login(const std::string& email, const s
 }
 
 std::optional<unsigned int> AuthService::signIn(const std::string & name , const std::string & email, const std::string & password) {
+    CustomerLevel customerLevel = CustomerLevel::BRONZE;
     if (repo.getUserbyEmail(email) != nullptr) //esiste già un utente con quella mail
         return std::nullopt;
-    return repo.createClient(name, email,hashPassword(password));;
+    return repo.createCustomer(name, email,hashPassword(password), customerLevel);
 }
 
 
@@ -41,6 +41,5 @@ std::string AuthService::hashPassword(const std::string& password) {
 }
 
 void AuthService::close() {
-    std::cout<<"Suca";
-    repo.save();
+    repo.write();
 }

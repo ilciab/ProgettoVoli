@@ -4,16 +4,16 @@
 
 #include "UserRepository.h"
 
-#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-#include "../domain/Client.h"
+#include "../domain/Admin.h"
 
 
-UserRepository::UserRepository(const std::string &path) {
-    this->path = path;
+UserRepository::UserRepository(const std::string &customerPath, const std::string& adminPath) {
+    this->customerPath = customerPath;
+    this->adminPath = adminPath;
     UserRepository::load();
 }
 
@@ -24,43 +24,56 @@ void UserRepository::add(const User& user) {
 
 void UserRepository::load() {
     unsigned int largestId = 0;
-    std::ifstream userFile(path);
+    std::ifstream userFile(customerPath);
     if (!userFile) {
-        std::ofstream create(path);
+        std::ofstream create(customerPath);
         create.close();
-        userFile.open(path);
+        userFile.open(customerPath);
     }
     std::string line;
-    std::string idStr, name, email, hashedPassword;
+    std::string idStr, name, email, hashedPassword, customerLevelString;
+    CustomerLevel customerLevel;
     while (std::getline(userFile, line)) {
         std::stringstream ss(line);
         std::getline(ss, idStr, ';');
         std::getline(ss, name, ';');
         std::getline(ss, email, ';');
         std::getline(ss, hashedPassword, ';');
-
+        std::getline(ss, customerLevelString, ';');
+        //todo fix se non c'è un id
         unsigned int id = std::stoul(idStr);
+        customerLevel = static_cast<CustomerLevel>(std::stoi(customerLevelString));
         std::cout << email;
         std::cout << hashedPassword;
-        users.emplace_back(std::make_unique<User>(id,name,email,hashedPassword));
+        users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword,customerLevel));
         largestId = std::max(largestId, id);
     }
     idGen.setStartingId(largestId);
     userFile.close();
 }
 
-void UserRepository::save() {
-    std::ofstream out(path, std::ios::trunc); // overwrite file
+
+std::ofstream openFile(const std::string& path) {
+    std::ofstream out(path, std::ios::trunc);
     if (!out) {
         std::ofstream create(path);
         create.close();
         out.open(path);
     }
+    return out;
+}
+
+void UserRepository::write() {
+    std::ofstream customerOut = openFile(customerPath);
+    std::ofstream adminOut = openFile(adminPath);
     for (const auto& user : users) {
-        out << user -> getId() << ';'
+
+        if (user->getRole() == UserRole::Customer) {}
+        customerOut << user -> getId() << ';'
             << user -> getName() << ';'
             << user -> getEmail() << ';'
-            << user -> gethashedPassword().
+            << user -> getHashedPassword() << ';'
+            << static_cast<int>(std::get<CustomerLevel>(user -> getLevel()))<< ';'
             << '\n';
     }
 }
@@ -73,9 +86,9 @@ const User* UserRepository::getUserbyEmail(const std::string& email) {
     return nullptr;
 }
 
-unsigned int UserRepository::createClient(const std::string & name, const std::string & email, const std::string & hashedPassword) {
+unsigned int UserRepository::createCustomer(const std::string & name, const std::string & email, const std::string & hashedPassword, const CustomerLevel& customerLevel) {
     unsigned int id = idGen.getNextId();
-    users.emplace_back(std::make_unique<Client>(id,name,email,hashedPassword));
+    users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword, customerLevel));
     return id;
 }
 
