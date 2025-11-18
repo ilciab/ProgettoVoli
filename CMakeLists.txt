@@ -23,4 +23,11 @@ add_executable(ProgettoVoli main.cpp
         enums/UserRole.h
         enums/CustomerLevel.h
         enums/AdminLevel.h
+        domain/UserStruct.h
+        domain/Flight.cpp
+        domain/Flight.h
+        domain/Airport.cpp
+        domain/Airport.h
+        repo/AirportRepository.cpp
+        repo/AirportRepository.h
 )

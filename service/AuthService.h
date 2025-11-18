@@ -7,16 +7,19 @@
 #include "../repo/UserRepository.h"
 
 
+struct UserStruct;
+
 class AuthService {
     private:
         UserRepository& repo;
 
     public:
-        std::optional<unsigned int> login(const std::string&, const std::string&);
-        std::optional<unsigned int> signIn(const std::string&, const std::string&, const std::string&);
+        std::optional<UserStruct> login(const std::string&, const std::string&);
+        std::optional<UserStruct> signIn(const std::string&, const std::string&, const std::string&);
         std::string hashPassword(const std::string&);
 
         void close();
+
         explicit AuthService(UserRepository&);
 };
 

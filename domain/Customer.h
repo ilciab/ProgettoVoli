@@ -11,17 +11,28 @@ class Customer : public User {
 
 private:
     CustomerLevel level;
+    UserRole userRole = UserRole::Customer;
 
 
 public:
 
-    UserRole getRole() const override {return UserRole::Customer;}
+    UserRole getRole() const override {return userRole;}
     std::variant<CustomerLevel, AdminLevel> getLevel() const override { return level;}
 
-    Customer(const unsigned int &id, const std::string &name, const std::string &email, const std::string &hashedPassword)
+
+    bool setLevel(const std::variant<CustomerLevel, AdminLevel> &level) override {
+        if (std::holds_alternative<CustomerLevel>(level)) {
+            this->level = std::get<CustomerLevel>(level);
+            return true;
+        }
+        return false;
+    }
+
+
+    Customer(unsigned int id, const std::string &name, const std::string &email, const std::string &hashedPassword)
         : User(id, name, email, hashedPassword){ level = CustomerLevel::BRONZE;}
 
-    Customer(const unsigned int &id, const std::string &name, const std::string &email, const std::string &hashedPassword, const CustomerLevel& customerLevel)
+    Customer(unsigned int id, const std::string &name, const std::string &email, const std::string &hashedPassword, const CustomerLevel& customerLevel)
         : User(id, name, email, hashedPassword){ level = customerLevel;}
 };
 

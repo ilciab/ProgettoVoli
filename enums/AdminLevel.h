@@ -7,4 +7,4 @@
 
 #endif //PROGETTOVOLI_ADMINLEVEL_H
 
-enum class AdminLevel {JUNIOR, SENIOR, ROOT,};
+enum class AdminLevel {BASE, ROOT};

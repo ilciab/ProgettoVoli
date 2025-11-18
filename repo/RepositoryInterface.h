@@ -15,15 +15,16 @@ template <typename T>
 
 class RepositoryInterface {
 
-public:
+protected:
+    virtual T* getById_internal(int id) = 0;
 
-    virtual std::vector<T> getAll() = 0;
-    virtual unsigned int* getById(int id) = 0;
+public:
+    virtual const T* getById(int id) const = 0;
     virtual void remove(int id) = 0;
     virtual void add(const T&) = 0;
     virtual void write() = 0;
     virtual void load() = 0;
-
+    virtual const std::vector<const T*> getAll() = 0;
     virtual ~RepositoryInterface() = default;
 };
 

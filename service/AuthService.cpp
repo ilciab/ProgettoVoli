@@ -4,39 +4,46 @@
 
 #include "AuthService.h"
 
+#include "../domain/UserStruct.h"
 
 
-AuthService::AuthService(UserRepository& repo) : repo(repo) {}
+AuthService::AuthService(UserRepository &repo) : repo(repo) {
+}
 
 
-std::optional<unsigned int> AuthService::login(const std::string& email, const std::string& password) {
-    const User* user = repo.getUserbyEmail(email);
-    std::string hashedPassword = hashPassword(password);
+std::optional<UserStruct> AuthService::login(const std::string &email, const std::string &password) {
+    UserStruct loginResult;
+    const User *user = repo.getByEmail(email);
+    const std::string hashedPassword = hashPassword(password);
 
     if (user == nullptr) {
         return std::nullopt;
     }
+    if (user->getHashedPassword() != hashedPassword)
+        return std::nullopt;
 
-    if (user->getHashedPassword() == hashedPassword)
-        return user->getId();
+    loginResult.id = user->getId();
+    loginResult.role = user->getRole();
 
-    return std::nullopt;
-
+    return loginResult;
     //todo differenziare MailNotFound da WrongPassword
 }
 
-std::optional<unsigned int> AuthService::signIn(const std::string & name , const std::string & email, const std::string & password) {
-    CustomerLevel customerLevel = CustomerLevel::BRONZE;
-    if (repo.getUserbyEmail(email) != nullptr) //esiste già un utente con quella mail
+std::optional<UserStruct> AuthService::signIn(const std::string &name, const std::string &email, const std::string &password) {
+    UserStruct loginResult;
+    if (repo.getByEmail(email) != nullptr) //esiste già un utente con quella mail
         return std::nullopt;
-    return repo.createCustomer(name, email,hashPassword(password), customerLevel);
+    loginResult.id = repo.createCustomer(name, email, hashPassword(password), CustomerLevel::BRONZE);
+    loginResult.role = UserRole::Customer;
+
+    return loginResult;
 }
 
 
-std::string AuthService::hashPassword(const std::string& password) {
+std::string AuthService::hashPassword(const std::string &password) {
     uint64_t h = 5381;
-    for (unsigned char c : password)
-        h = (h*33) + c;
+    for (unsigned char c: password)
+        h = (h * 33) + c;
     return std::to_string(h);
 }
 

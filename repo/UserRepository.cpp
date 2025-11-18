@@ -10,30 +10,31 @@
 
 #include "../domain/Admin.h"
 
-
-UserRepository::UserRepository(const std::string &customerPath, const std::string& adminPath) {
-    this->customerPath = customerPath;
-    this->adminPath = adminPath;
-    UserRepository::load();
-}
-
-
 void UserRepository::add(const User& user) {
+    //todo implementarla e aggiustare createUser farlo magari qua dentro o per lo meno fare che createUser chiama add
 }
 
+
+std::fstream openFile(const std::string& path, const std::ios::openmode& mode) {
+    std::fstream file(path, mode);
+    if (!file) {
+        std::ofstream create(path);
+        create.close();
+        file.open(path, mode);
+    }
+    return file;
+}
 
 void UserRepository::load() {
+    std::fstream customerIn = openFile(customerPath, std::ios::in);
+    std::fstream adminIn = openFile(adminPath, std::ios::in);
+
     unsigned int largestId = 0;
-    std::ifstream userFile(customerPath);
-    if (!userFile) {
-        std::ofstream create(customerPath);
-        create.close();
-        userFile.open(customerPath);
-    }
     std::string line;
     std::string idStr, name, email, hashedPassword, customerLevelString;
     CustomerLevel customerLevel;
-    while (std::getline(userFile, line)) {
+    AdminLevel adminLevel;
+    while (std::getline(customerIn, line)) {
         std::stringstream ss(line);
         std::getline(ss, idStr, ';');
         std::getline(ss, name, ';');
@@ -43,42 +44,61 @@ void UserRepository::load() {
         //todo fix se non c'è un id
         unsigned int id = std::stoul(idStr);
         customerLevel = static_cast<CustomerLevel>(std::stoi(customerLevelString));
-        std::cout << email;
-        std::cout << hashedPassword;
         users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword,customerLevel));
         largestId = std::max(largestId, id);
     }
-    idGen.setStartingId(largestId);
-    userFile.close();
-}
-
-
-std::ofstream openFile(const std::string& path) {
-    std::ofstream out(path, std::ios::trunc);
-    if (!out) {
-        std::ofstream create(path);
-        create.close();
-        out.open(path);
+    while (std::getline(adminIn, line)) {
+        std::stringstream ss(line);
+        std::getline(ss, idStr, ';');
+        std::getline(ss, name, ';');
+        std::getline(ss, email, ';');
+        std::getline(ss, hashedPassword, ';');
+        std::getline(ss, customerLevelString, ';');
+        //todo fix se non c'è un id
+        unsigned int id = std::stoul(idStr);
+        adminLevel = static_cast<AdminLevel>(std::stoi(customerLevelString));
+        users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword,adminLevel));
+        largestId = std::max(largestId, id);
     }
-    return out;
+    idGen.setStartingId(largestId);
+    customerIn.close();
+    adminIn.close();
 }
+
 
 void UserRepository::write() {
-    std::ofstream customerOut = openFile(customerPath);
-    std::ofstream adminOut = openFile(adminPath);
-    for (const auto& user : users) {
+    std::fstream customerOut = openFile(customerPath,std::ios::out);
+    std::fstream adminOut = openFile(adminPath, std::ios::out);
 
-        if (user->getRole() == UserRole::Customer) {}
-        customerOut << user -> getId() << ';'
-            << user -> getName() << ';'
-            << user -> getEmail() << ';'
-            << user -> getHashedPassword() << ';'
-            << static_cast<int>(std::get<CustomerLevel>(user -> getLevel()))<< ';'
-            << '\n';
+    if (!customerOut.is_open()) {
+        std::cerr << "Errore nell'apertura file clienti\n";
+        return; // O gestisci errore diversamente
     }
+
+    for (const auto& user : users) {
+        if (user->getRole() == UserRole::Customer)
+        {
+            customerOut << user -> getId() << ';'
+                << user -> getName() << ';'
+                << user -> getEmail() << ';'
+                << user -> getHashedPassword() << ';'
+                << static_cast<int>(std::get<CustomerLevel>(user -> getLevel()))<< ';'
+                << '\n';
+        }
+        else if (user -> getRole() == UserRole::Admin) {
+            adminOut << user -> getId() << ';'
+                << user -> getName() << ';'
+                << user -> getEmail() << ';'
+                << user -> getHashedPassword() << ';'
+                << static_cast<int>(std::get<AdminLevel>(user -> getLevel()))<< ';'
+                << '\n';
+        }
+    }
+    customerOut.close();
+    adminOut.close();
 }
 
-const User* UserRepository::getUserbyEmail(const std::string& email) {
+const User* UserRepository::getByEmail(const std::string& email) const {
     for (const auto& user: users) {
         if (user->getEmail()  == email)
             return user.get();
@@ -92,18 +112,50 @@ unsigned int UserRepository::createCustomer(const std::string & name, const std:
     return id;
 }
 
+const std::vector<const User *> UserRepository::getAll() {
+    std::vector<const User *> result;
 
-std::vector<User> UserRepository::getAll() {
-
+    for (const auto& user : users) {
+        result.push_back(user.get());
+    }
+    return result;
 }
 
-unsigned int* UserRepository::getById(int id) {
+User * UserRepository::getById_internal(int id) {
+        for (auto& user : users) {
+            if (user -> getId() == id)
+                return user.get();
+        }
+        return nullptr;
+}
 
+const User* UserRepository::getById(int id) const{
+    for (const auto& user : users) {
+        if (user -> getId() == id)
+            return user.get();
+    }
+    return nullptr;
+}
+
+void UserRepository::setUserName(unsigned int userId, const std::string &newName) {
+    User* user = getById_internal(userId);
+    std::cout << userId << '\n';
+    user->setName(newName);
+}
+
+void UserRepository::setUserEmail(unsigned int userId, const std::string &newEmail) {
+    getById_internal(userId)->setEmail(newEmail);
 }
 
 void UserRepository::remove(int id) {
-
+    for (int i = 0; i < users.size(); ++i) {
+        if (users[i] -> getId() == id) {
+            users.erase(users.begin() + i);
+            break;
+        }
+    }
 }
+
 
 
 
