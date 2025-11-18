@@ -31,7 +31,7 @@ public:
     void remove(int id) override;
     const User* getByEmail(const std::string& email) const;
     const User* getById(int id) const override;
-    const std::vector<const User*> getAll() override;a
+    const std::vector<const User*> getAll() override;
 
     User *getById_internal(int id) override;
     void setUserName(unsigned int userId, const std::string & newName);
