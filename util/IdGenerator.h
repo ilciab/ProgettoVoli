@@ -10,11 +10,11 @@
 
 class IdGenerator {
 private:
-        unsigned int nextId = 1; //cambiare prendere l'id più grande, mettere un idGenerator per ogni repository
+        unsigned int nextId = 0; //cambiare prendere l'id più grande, mettere un idGenerator per ogni repository
 public:
         IdGenerator();
-        void setStartingId(const unsigned int&);
-        unsigned int getNextId();
+        void setStartingId(const unsigned int id) {nextId = id+1;}
+        unsigned int getNextId() {return nextId++;}
 };
 
 

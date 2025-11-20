@@ -163,30 +163,30 @@ void CLI::printAllAirports() {
     }
 }
 void CLI::adminAirportsMenu() {
-    unsigned int selectedId = 1;
-    while (selectedId != 0) {
+    unsigned int choice = 1;
+    while (choice != 0) {
         printAllAirports();
         std::cout << "Enter id of airport to modify\n";
         std::cout << " 0 - Indietro\n";
-        std::cin >> selectedId;
-        const Airport *airpor = adminService.getAirport(selectedId);
+        std::cin >> choice;
+        const Airport *airport = adminService.getAirport(choice);
 
-        if (user == nullptr) {
-            std::cout << "L'utente con id: " << selectedId << " non esiste\n";
-            continue;
-        }
         bool running = true;
         while (running) {
             int choice;
-            std::cout << "Utente Selezionato:\n";
-            std::cout << "ID:" << user->getId() << "\t";
-            std::cout << "Email:" << user->getEmail() << "\t";
-            std::cout << "Name:" << user->getName() << "\t";
+            std::cout << "Aeroporto selezionato:\n";
+            std::cout << "ID:" << airport->getId() << "\t";
+            std::cout << "IATA:" << airport->getIata() << "\t\t";
+            std::cout << "Nation:" << airport->getNation() << "\t";
+            std::cout << "City:" <<  airport->getCity() << "\t";
+            std::cout << "Name:" << airport->getName() << "\n";
             std::cout << std::endl;
-            std::cout << "1 - Modifica Nome\n";
-            std::cout << "2 - Modifica Email\n";
-            std::cout << "3 - Modifica Livello\n";
-            std::cout << "4 - Elimina\n";
+            std::cout << "1 - Nuovo Aeroporto\n";
+            std::cout << "2 - Modifica IATA\n";
+            std::cout << "3 - Modifica Nazione\n";
+            std::cout << "4 - Modifica Città\n";
+            std::cout << "5 - Modifica Nome\n";
+            std::cout << "6 - Elimina\n";
             std::cout << "0 - Indietro";
 
             std::cin >> choice;
@@ -194,26 +194,39 @@ void CLI::adminAirportsMenu() {
             std::string newAttribute;
             switch (choice) {
                 case 1:
-                    std::cout<<"Inserisci nuovo nome: ";
-                    std::cin >> newAttribute;
-                    std::cout<<std::endl;
-                    adminService.modifyUserName(user-> getId(), newAttribute);
+                    std::cout<<"Inserisci dati del nuovo areporto";
+                    std::cout<<"IATA";
+                    std::cout<<"Nazione";
+                    std::cout<<"Città";
+                    std::cout<<"Nome";
                     break;
                 case 2:
-                    std::cout<<"Inserisci nuova email: ";
+                    std::cout<<"Inserisci nuovo IATA: ";
                     std::cin >> newAttribute;
                     std::cout<<std::endl;
-                    adminService.modifyUserEmail(user-> getId(), newAttribute);
+                    adminService.modifyAirportIATA(airport->getId(), newAttribute);
                     break;
                 case 3:
-                    std::cout<<"Da implementare";
-                    //std::cout<<"Inserisci nuovo livello: ";
-                    //std::cin >> newAttribute;
-                    //adminService.modifyLevel(user-> getId(), newAttribute);
+                    std::cout<<"Inserisci nuova Nazione: ";
+                    std::cin >> newAttribute;
+                    std::cout<<std::endl;
+                    adminService.modifyAirportNation(airport->getId(), newAttribute);
                     break;
                 case 4:
-                    std::cout<<"Utente eliminato\n";
-                    adminService.deleteUser(user->getId());
+                    std::cout<<"Inserisci nuova Città: ";
+                    std::cin >> newAttribute;
+                    std::cout<<std::endl;
+                    adminService.modifyAirportCity(airport->getId(), newAttribute);
+                    break;
+                case 5:
+                    std::cout<<"Inserisci nuovo Nome: ";
+                    std::cin >> newAttribute;
+                    std::cout<<std::endl;
+                    adminService.modifyAirportName(airport->getId(), newAttribute);
+                    break;
+                case 6:
+                    std::cout<<"";//todo
+                    break;
                 case 0:
                     running = false;
                     break;

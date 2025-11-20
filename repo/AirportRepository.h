@@ -13,6 +13,7 @@
 class AirportRepository : public RepositoryInterface<Airport>{
     std::vector<std::unique_ptr<Airport>> airports;
     std::string path;
+    IdGenerator idGen;
 
 public:
     AirportRepository(const std::string &path)
@@ -20,20 +21,18 @@ public:
         AirportRepository::load();
     }
 
-private:
-    IdGenerator idGen;
-
-public:
-
     void remove(int id) override;
-    void add(const Airport &) override;
     void write() override;
     void load() override;
-    const Airport* getById(int id) const override;
+
+    const Airport* getById(unsigned int id) const override;
     Airport *getById_internal(int id) override;
-    const std::vector<const Airport*> getAll() override;
+    std::vector<const Airport *> getAll() override;
 
-
+    void setAirportIata(unsigned int airportId, const std::string &newIata);
+    void setAirportNation(unsigned int airportId, const std::string &newNation);
+    void setAirportName(unsigned int airportId, const std::string &newName);
+    void setAirportCity(unsigned int airportId, const std::string &newCity);
 };
 
 

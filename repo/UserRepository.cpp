@@ -9,21 +9,8 @@
 #include <sstream>
 
 #include "../domain/Admin.h"
+#include "../util/RepositoryUtils.h"
 
-void UserRepository::add(const User& user) {
-    //todo implementarla e aggiustare createUser farlo magari qua dentro o per lo meno fare che createUser chiama add
-}
-
-
-std::fstream openFile(const std::string& path, const std::ios::openmode& mode) {
-    std::fstream file(path, mode);
-    if (!file) {
-        std::ofstream create(path);
-        create.close();
-        file.open(path, mode);
-    }
-    return file;
-}
 
 void UserRepository::load() {
     std::fstream customerIn = openFile(customerPath, std::ios::in);
@@ -112,7 +99,13 @@ unsigned int UserRepository::createCustomer(const std::string & name, const std:
     return id;
 }
 
-const std::vector<const User *> UserRepository::getAll() {
+unsigned int UserRepository::createAdmin(const std::string & name, const std::string & email, const std::string & hashedPassword, const AdminLevel& adminLevel) {
+    unsigned int id = idGen.getNextId();
+    users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword, adminLevel));
+    return id;
+}
+
+std::vector<const User *> UserRepository::getAll() {
     std::vector<const User *> result;
 
     for (const auto& user : users) {
@@ -138,9 +131,7 @@ const User* UserRepository::getById(int id) const{
 }
 
 void UserRepository::setUserName(unsigned int userId, const std::string &newName) {
-    User* user = getById_internal(userId);
-    std::cout << userId << '\n';
-    user->setName(newName);
+    getById_internal(userId)->setName(newName);
 }
 
 void UserRepository::setUserEmail(unsigned int userId, const std::string &newEmail) {
@@ -148,12 +139,7 @@ void UserRepository::setUserEmail(unsigned int userId, const std::string &newEma
 }
 
 void UserRepository::remove(int id) {
-    for (int i = 0; i < users.size(); ++i) {
-        if (users[i] -> getId() == id) {
-            users.erase(users.begin() + i);
-            break;
-        }
-    }
+    removeById(users, id);
 }
 
 

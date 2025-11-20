@@ -31,6 +31,8 @@ public:
           price(price),
           totalSeats(total_seats){
     }
+
+    //todo
 };
 
 

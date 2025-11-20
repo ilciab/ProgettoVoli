@@ -12,32 +12,39 @@
 
 
 class UserRepository : public RepositoryInterface<User> {
+    std::vector<std::unique_ptr<User> > users; //per gestione automatica e sennò si perde il rifeirmento
+    std::string customerPath, adminPath;
+    IdGenerator idGen;
+    User *getById_internal(int id) override;
 
-private:
-        std::vector<std::unique_ptr<User>> users; //per gestione automatica e sennò si perde il rifeirmento
-        std::string customerPath, adminPath;
-        IdGenerator idGen;
 public:
-        UserRepository(const std::string &customerPath, const std::string &adminPath)
-            : customerPath(customerPath),
-              adminPath(adminPath) {
-            UserRepository::load();
-        }
+    UserRepository(const std::string &customerPath, const std::string &adminPath)
+        : customerPath(customerPath),
+          adminPath(adminPath) {
+        UserRepository::load();
+    }
 
     void load() override;
+
     void write() override;
-    void add(const User&) override;
-    unsigned int createCustomer(const std::string&, const std::string&, const std::string&, const CustomerLevel& customerLevel);
+
     void remove(int id) override;
-    const User* getByEmail(const std::string& email) const;
-    const User* getById(int id) const override;
-    const std::vector<const User*> getAll() override;
 
-    User *getById_internal(int id) override;
-    void setUserName(unsigned int userId, const std::string & newName);
-    void setUserEmail(unsigned int userId, const std::string & newEmail);
+    unsigned int createCustomer(const std::string &name, const std::string &email, const std::string &hashedPassword, const CustomerLevel &customerLevel);
+
+    unsigned int createAdmin(const std::string &name, const std::string &email, const std::string &hashedPassword,const AdminLevel &adminLevel);
+
+    const User *getByEmail(const std::string &email) const;
+
+    const User *getById(int id) const override;
+
+    std::vector<const User *> getAll() override;
+
+    void setUserName(unsigned int userId, const std::string &newName);
+    void setUserEmail(unsigned int userId, const std::string &newEmail);
+    void setUserLevel(unsigned int userId, const AdminLevel &newLevel);
+    void setUserLevel(unsigned int userId, const CustomerLevel &newLevel);
 };
-
 
 
 #endif //USERREPOSITORY_H

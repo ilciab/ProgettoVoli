@@ -7,40 +7,23 @@
 #include <iostream>
 #include <ostream>
 
-const std::vector<const User *> AdminService::getAllUsers() {
-    return userRepo.getAll();
-}
-const User *AdminService::getUser(const unsigned int userId) { return userRepo.getById(userId); }
+const std::vector<const User *> AdminService::getAllUsers() { return userRepo.getAll(); }
+const User *AdminService::getUser(const unsigned int userId) const { return userRepo.getById(userId); }
 
-void AdminService::modifyUserName(unsigned int userId, const std::string &newName) {
-    userRepo.setUserName(userId, newName);
-}
+void AdminService::modifyUserName(unsigned int userId, const std::string &newName) const { userRepo.setUserName(userId, newName);}
 
-void AdminService::modifyUserEmail(unsigned int userId, const std::string &newEmail) {
-    userRepo.setUserEmail(userId, newEmail);
-}
+void AdminService::modifyUserEmail(unsigned int userId, const std::string &newEmail) const { userRepo.setUserEmail(userId, newEmail); }
 
-void AdminService::modifyUserLevel(unsigned int userId, const std::string &newLevel) {
-}
+void AdminService::modifyUserLevel(unsigned int userId, const std::string &newLevel) {}
 
-void AdminService::deleteUser(unsigned int userId) { userRepo.remove(userId); }
+void AdminService::deleteUser(unsigned int userId) const { userRepo.remove(userId); }
 
-const std::vector<const Airport *> AdminService::getAllAirports() {
-    return airportRepo.getAll();
-}
+const Airport *AdminService::getAirport(unsigned int airportId) { return airportRepo.getById(airportId); }
+const std::vector<const Airport *> AdminService::getAllAirports() { return airportRepo.getAll(); }
 
-const Airport * AdminService::getAirport(unsigned int airportId) { return airportRepo.getById(airportId); }
+void AdminService::modifyAirportName(const unsigned int airportId, const std::string &newName) const { airportRepo.setAirportName(airportId, newName); }
+void AdminService::modifyAirportNation(const unsigned int airportId, const std::string &newNation) const { airportRepo.setAirportNation(airportId, newNation); }
+void AdminService::modifyAirportCity(const unsigned int airportId, const std::string &newCity) const { airportRepo.setAirportCity(airportId, newCity); }
+void AdminService::modifyAirportIATA(const unsigned int airportId, const std::string &newIata) const { airportRepo.setAirportIata(airportId, newIata); }
 
-void AdminService::modifyAirportName(unsigned int airportId, const std::string &newName) { return airportRepo.setAirportName()}
-
-void AdminService::modifyAirpotyNation(unsigned int airportId, const std::string &newNation) {
-}
-
-void AdminService::modifyAirportCity(unsigned int airportId, const std::string &newCity) {
-}
-
-void AdminService::modifyAirportIATA(unsigned int airportId, const std::string &newIata) {
-}
-
-void AdminService::deleteAirport(unsigned int airportId) {
-}
+void AdminService::deleteAirport(const unsigned int airportId) {}

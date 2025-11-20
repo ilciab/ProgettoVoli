@@ -8,7 +8,6 @@ add_executable(ProgettoVoli main.cpp
         repo/RepositoryInterface.h
         repo/UserRepository.cpp
         repo/UserRepository.h
-        util/IdGenerator.cpp
         util/IdGenerator.h
         ui/CLI.cpp
         ui/CLI.h
@@ -24,10 +23,11 @@ add_executable(ProgettoVoli main.cpp
         enums/CustomerLevel.h
         enums/AdminLevel.h
         domain/UserStruct.h
-        domain/Flight.cpp
         domain/Flight.h
-        domain/Airport.cpp
         domain/Airport.h
         repo/AirportRepository.cpp
         repo/AirportRepository.h
+        util/RepositoryUtils.h
+        repo/FlightRepository.cpp
+        repo/FlightRepository.h
 )

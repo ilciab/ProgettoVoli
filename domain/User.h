@@ -33,6 +33,7 @@ public:
     void setEmail(const std::string &email) { this->email = email; }
     void setHashedPassword(const std::string &hashedPassword) { this->hashedPassword = hashedPassword; }
 
+
 /**
  * @brief Tenta di aggiornare il livello dell'utente.
  * * @return @c true se il tipo di livello passato corrisponde al tipo di utente (es. CustomerLevel per un Customer).

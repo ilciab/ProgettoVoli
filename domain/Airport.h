@@ -15,15 +15,17 @@ class Airport {
     std::string iata;
 
 public:
-    const unsigned int getId() const {return id;}
+    const unsigned int getId() const { return id; }
+    const std::string &getName() const { return name; }
+    const std::string &getNation() const { return nation; }
+    const std::string &getCity() const { return city; }
+    const std::string &getIata() const { return iata; }
 
-    const std::string &getName() const {return name;}
+    void setName(const std::string &name) { this->name = name; }
+    void setNation(const std::string &nation) { this->nation = nation; }
+    void setCity(const std::string &city) { this->city = city; }
+    void setIata(const std::string &iata) { this->iata = iata; }
 
-    const std::string &getNation() const {return nation;}
-
-    const std::string &getCity() const {return city;}
-
-    const std::string &getIata() const {return iata;}
 
     Airport(unsigned int id, const std::string &name, const std::string &nation, const std::string &city,
             const std::string &iata)
