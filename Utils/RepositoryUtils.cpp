@@ -1,23 +1,10 @@
 //
-// Created by ilciab on 11/20/25.
+// Created by ilciab on 11/26/25.
 //
 
-#ifndef PROGETTOVOLI_REPOSITORYUTILS_H
-#define PROGETTOVOLI_REPOSITORYUTILS_H
-#include <memory>
-#include <vector>
+#include "RepositoryUtils.h"
 
-template <typename T>
 
-bool removeById(std::vector<std::unique_ptr<T>>& items, unsigned int id) {
-    for (int i = 0; i < items.size(); ++i) {
-        if (items[i] -> getId() == id) {
-            items.erase(items.begin() + i);
-            return true;
-        }
-    }
-    return false;
-}
 
 std::fstream openFile(const std::string& path, const std::ios::openmode& mode) {
     std::fstream file(path, mode);
@@ -49,6 +36,9 @@ std::string readBinaryString(std::fstream &file) {
     return str;
 }
 
-
-
-#endif //PROGETTOVOLI_REPOSITORYUTILS_H
+std::string timePointToString(const std::chrono::system_clock::time_point &tp) {
+    std::time_t t = std::chrono::system_clock::to_time_t(tp);
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
+    return ss.str();
+};

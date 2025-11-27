@@ -8,8 +8,8 @@
 #include <iostream>
 #include <sstream>
 
-#include "../domain/Admin.h"
-#include "../util/RepositoryUtils.h"
+#include "../Domain/Admin.h"
+#include "../Utils/RepositoryUtils.h"
 
 
 void UserRepository::load() {
@@ -59,7 +59,7 @@ void UserRepository::write() {
 
     if (!customerOut.is_open()) {
         std::cerr << "Errore nell'apertura file clienti\n";
-        return; // O gestisci errore diversamente
+        return; //todo O gestisci errore diversamente
     }
 
     for (const auto& user : users) {
@@ -114,7 +114,7 @@ std::vector<const User *> UserRepository::getAll() {
     return result;
 }
 
-User * UserRepository::getById_internal(int id) {
+User * UserRepository::getById_internal(const unsigned int id) {
         for (auto& user : users) {
             if (user -> getId() == id)
                 return user.get();
@@ -122,7 +122,7 @@ User * UserRepository::getById_internal(int id) {
         return nullptr;
 }
 
-const User* UserRepository::getById(int id) const{
+const User* UserRepository::getById(const unsigned int id) const{
     for (const auto& user : users) {
         if (user -> getId() == id)
             return user.get();
@@ -138,7 +138,7 @@ void UserRepository::setUserEmail(unsigned int userId, const std::string &newEma
     getById_internal(userId)->setEmail(newEmail);
 }
 
-void UserRepository::remove(int id) {
+void UserRepository::remove(const unsigned int id) {
     removeById(users, id);
 }
 

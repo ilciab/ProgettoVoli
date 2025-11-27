@@ -15,7 +15,7 @@ class Airport {
     std::string iata;
 
 public:
-    const unsigned int getId() const { return id; }
+    unsigned int getId() const { return id; }
     const std::string &getName() const { return name; }
     const std::string &getNation() const { return nation; }
     const std::string &getCity() const { return city; }
@@ -27,8 +27,8 @@ public:
     void setIata(const std::string &iata) { this->iata = iata; }
 
 
-    Airport(unsigned int id, const std::string &name, const std::string &nation, const std::string &city,
-            const std::string &iata)
+    Airport(unsigned int id, const std::string &iata, const std::string &nation, const std::string &city,
+            const std::string &name)
         : id(id),
           name(name),
           nation(nation),

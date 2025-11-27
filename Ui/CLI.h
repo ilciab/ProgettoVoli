@@ -4,9 +4,9 @@
 
 #ifndef CLI_H
 #define CLI_H
-#include "../service/AuthService.h"
-#include "../domain/UserStruct.h"
-#include "../service/AdminService.h"
+#include "../Services/AuthService.h"
+#include "../Domain/UserStruct.h"
+#include "../Services/AdminService.h"
 
 
 class CLI {
@@ -25,13 +25,18 @@ class CLI {
 
         void adminMenu();
 
-        void printAllUsers();
-
         void adminUsersMenu();
+        unsigned int printAllUsers() const;
+        unsigned int printAllAirports() const;
+        unsigned int printAllFlights() const;
 
-        void printAllAirports();
+        static int stringToPositiveInteger(const std::string &string);
+
 
         void adminAirportsMenu();
+        void createAirportWizard();
+        void manageSingleAirport(const unsigned int id);
+
         void adminFlightsMenu();
         void adminBookingsMenu();
         void customerMenu();
@@ -41,9 +46,14 @@ class CLI {
         void customerBookingsMenu();
         void loginMenu();
 
-        std::optional<UserStruct> signIn();
 
+
+        std::optional<UserStruct> signIn();
         std::optional<UserStruct> login();
+
+        std::string iataFormat(std::string iata);
+
+
 };
 
 

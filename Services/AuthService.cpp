@@ -4,7 +4,7 @@
 
 #include "AuthService.h"
 
-#include "../domain/UserStruct.h"
+#include "../Domain/UserStruct.h"
 
 
 AuthService::AuthService(UserRepository &repo) : repo(repo) {

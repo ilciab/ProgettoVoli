@@ -9,9 +9,9 @@
 #include <typeindex>
 #include <variant>
 
-#include "../enums/AdminLevel.h"
-#include "../enums/CustomerLevel.h"
-#include "../enums/UserRole.h"
+#include "../Enums/AdminLevel.h"
+#include "../Enums/CustomerLevel.h"
+#include "../Enums/UserRole.h"
 
 class User {
 protected:
@@ -24,7 +24,8 @@ public:
     virtual UserRole getRole() const = 0;
 
     virtual std::variant<CustomerLevel, AdminLevel> getLevel() const = 0;
-    const unsigned int getId() const { return id; }
+
+    unsigned int getId() const { return id; }
     const std::string &getName() const { return name; }
     const std::string &getEmail() const { return email; }
     const std::string &getHashedPassword() const { return hashedPassword; }

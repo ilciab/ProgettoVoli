@@ -4,30 +4,31 @@ project(ProgettoVoli)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(ProgettoVoli main.cpp
-        domain/User.h
-        repo/RepositoryInterface.h
-        repo/UserRepository.cpp
-        repo/UserRepository.h
-        util/IdGenerator.h
-        ui/CLI.cpp
-        ui/CLI.h
-        service/AuthService.cpp
-        service/AuthService.h
-        domain/Customer.h
-        service/AdminService.cpp
-        service/AdminService.h
-        domain/Admin.h
+        Domain/User.h
+        Repositories/RepositoryInterface.h
+        Repositories/UserRepository.cpp
+        Repositories/UserRepository.h
+        Utils/IdGenerator.h
+        Ui/CLI.cpp
+        Ui/CLI.h
+        Services/AuthService.cpp
+        Services/AuthService.h
+        Domain/Customer.h
+        Services/AdminService.cpp
+        Services/AdminService.h
+        Domain/Admin.h
         main.cpp
         main.cpp
-        enums/UserRole.h
-        enums/CustomerLevel.h
-        enums/AdminLevel.h
-        domain/UserStruct.h
-        domain/Flight.h
-        domain/Airport.h
-        repo/AirportRepository.cpp
-        repo/AirportRepository.h
-        util/RepositoryUtils.h
-        repo/FlightRepository.cpp
-        repo/FlightRepository.h
+        Enums/UserRole.h
+        Enums/CustomerLevel.h
+        Enums/AdminLevel.h
+        Domain/UserStruct.h
+        Domain/Flight.h
+        Domain/Airport.h
+        Repositories/AirportRepository.cpp
+        Repositories/AirportRepository.h
+        Utils/RepositoryUtils.h
+        Repositories/FlightRepository.cpp
+        Repositories/FlightRepository.h
+        Utils/RepositoryUtils.cpp
 )

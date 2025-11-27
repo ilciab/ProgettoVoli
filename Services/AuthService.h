@@ -4,7 +4,7 @@
 
 #ifndef AUTHSERVICE_H
 #define AUTHSERVICE_H
-#include "../repo/UserRepository.h"
+#include "../Repositories/UserRepository.h"
 
 
 struct UserStruct;

@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "RepositoryInterface.h"
-#include "../domain/Airport.h"
+#include "../Domain/Airport.h"
 
 
 class AirportRepository : public RepositoryInterface<Airport>{
@@ -16,23 +16,28 @@ class AirportRepository : public RepositoryInterface<Airport>{
     IdGenerator idGen;
 
 public:
-    AirportRepository(const std::string &path)
+    explicit AirportRepository(const std::string &path)
         : path(path) {
         AirportRepository::load();
     }
 
-    void remove(int id) override;
+    void remove(unsigned int id) override;
     void write() override;
     void load() override;
 
     const Airport* getById(unsigned int id) const override;
-    Airport *getById_internal(int id) override;
+    Airport *getById_internal(unsigned int id) override;
+    const Airport* getByIata(std::string iata) const;
     std::vector<const Airport *> getAll() override;
+
+    unsigned int createAirport(const std::string &iata, const std::string &nation, const std::string &city, const std::string &name);
 
     void setAirportIata(unsigned int airportId, const std::string &newIata);
     void setAirportNation(unsigned int airportId, const std::string &newNation);
     void setAirportName(unsigned int airportId, const std::string &newName);
     void setAirportCity(unsigned int airportId, const std::string &newCity);
+
+
 };
 
 
