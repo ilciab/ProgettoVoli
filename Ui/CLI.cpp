@@ -98,7 +98,7 @@ unsigned int CLI::printAllUsers() const {
                 customerLevel = std::get<CustomerLevel>(user->getLevel());
                 level = static_cast<int>(customerLevel);
                 break;
-        }
+
         std::cout << "ID: " << user->getId() << "\t";
         std::cout << "Email: " << user->getEmail() << "\t";
         std::cout << "Nome: " << user->getName() << "\t";
