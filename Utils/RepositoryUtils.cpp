@@ -3,6 +3,7 @@
 //
 
 #include "RepositoryUtils.h"
+#include <iomanip>
 
 
 
@@ -42,3 +43,27 @@ std::string timePointToString(const std::chrono::system_clock::time_point &tp) {
     ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
     return ss.str();
 };
+
+int stringToPositiveInteger(const std::string &string) {
+    try {
+        int result = std::stoi(string);
+
+        if (result < 0)
+            return -1;
+
+        return result;
+    } catch (...) { return -1; }
+}
+
+
+std::optional<std::chrono::system_clock::time_point> stringToTimePoint(const std::string &string) {
+    std::chrono::system_clock::time_point tp;
+    std::istringstream ss(string);
+
+    if (!(ss >> std::chrono::parse("%F %R", tp))) {
+        return std::nullopt;
+    }
+
+    return tp;
+}
+

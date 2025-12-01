@@ -34,6 +34,9 @@ public:
     void setFlightArrivalTime(unsigned int flightId, std::chrono::system_clock::time_point arrivalTime);
     void setFlightPrice(unsigned int flightId, float price);
     void setFlightTotalSeats(unsigned int flightId, unsigned int totalSeats);
+
+    unsigned int createFlight(unsigned int departureAirportId, unsigned int arrivalAirportId,
+    const std::chrono::system_clock::time_point &departureTimeStr, const std::chrono::system_clock::time_point &arrivalTimeStr, float price, unsigned int totalSeats);
 };
 
 

@@ -26,11 +26,11 @@ class CLI {
         void adminMenu();
 
         void adminUsersMenu();
-        unsigned int printAllUsers() const;
-        unsigned int printAllAirports() const;
-        unsigned int printAllFlights() const;
+        void printAllUsers(const std::vector<const User*> &users) const;
+        void printAllAirports(const std::vector<const Airport*> &airports) const;
+        void printAllFlights(const std::vector<const Flight*> &flights) const;
 
-        static int stringToPositiveInteger(const std::string &string);
+        //static int stringToPositiveInteger(const std::string &string);
 
 
         void adminAirportsMenu();
@@ -38,6 +38,9 @@ class CLI {
         void manageSingleAirport(const unsigned int id);
 
         void adminFlightsMenu();
+        void createFlightWizard();
+        void manageSingleFlight(const unsigned int id);
+
         void adminBookingsMenu();
         void customerMenu();
         void customerProfileMenu();

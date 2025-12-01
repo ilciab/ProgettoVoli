@@ -124,3 +124,12 @@ void FlightRepository::setFlightPrice(unsigned int flightId, float price) {
 void FlightRepository::setFlightTotalSeats(unsigned int flightId, unsigned int totalSeats) {
     getById_internal(flightId)->setTotalSeats(totalSeats);
 }
+
+unsigned int FlightRepository::createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
+    const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price,
+    const unsigned int totalSeats) {
+    unsigned int id = idGen.getNextId();
+    flights.emplace_back(std::make_unique<Flight>(id, departureAirportId, arrivalAirportId,
+        departureTime, arrivalTime, price, totalSeats));
+    return id;
+}

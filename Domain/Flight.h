@@ -19,6 +19,7 @@ class Flight {
     unsigned int totalSeats;
     unsigned int bookedSeats;
 
+
 public:
     unsigned int getId() const { return id; }
     unsigned int getDepartureAirportId() const { return departureAirportId; }

@@ -33,6 +33,13 @@ void AdminService::modifyAirportIATA(const unsigned int airportId, const std::st
 void AdminService::deleteAirport(const unsigned int airportId) const { airportRepo.remove(airportId); }
 
 
+bool AdminService::createFlight(const unsigned int arrivalAirportId, const unsigned int departureAirportId,
+                                const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats) {
+    //flightRepo.createFlight()
+    return true;
+}
+
+
 std::vector<const Flight *> AdminService::getAllFlights() { return flightRepo.getAll(); }
 const Flight * AdminService::getFlight(const unsigned int flightId) { return flightRepo.getById(flightId); }
 
