@@ -5,9 +5,15 @@
 #include "CLI.h"
 
 #include <iostream>
+#include <format>
 
 #include "../Utils/RepositoryUtils.h"
 
+
+std::string &timepointToString(std::chrono::system_clock::time_point tp){
+    std::string timeDateStr = std::format("{:%Y-%m-%d %H:%M}", tp);
+    return timeDateStr;
+}
 
 void CLI::customerMenu() {
     unsigned int choice = 1;
@@ -187,7 +193,6 @@ void CLI::printAllFlights(const std::vector<const Flight *> &flights) const {
     }
 }
 
-
 void CLI::createAirportWizard() {
     std::cin.ignore();
     std::string iata, nation, city, name;
@@ -299,12 +304,17 @@ void CLI::manageSingleAirport(const unsigned int id) {
 void CLI::createFlightWizard() {
     std::cin.ignore();
     int departureAirportId, arrivalAirportId, price, totalSeats;
-    std::string departureAirportIdStr, arrivalAirportIdStr, priceStr, totalSeatsStr, departureTimeStr,
-            arrivalTimeStr;
+    std::string departureAirportIdStr, arrivalAirportIdStr, priceStr, totalSeatsStr, departureTimeDateStr,
+            arrivalTimeDateStr;
     std::chrono::system_clock::time_point departureTime, arrivalTime;
     std::optional<std::chrono::system_clock::time_point> optTime;
 
     std::cout << "--- CREAZIONE VOLO ---\n";
+
+    std::vector<const Airport *> airports = adminService.getAllAirports();
+    printAllAirports(airports);
+
+
 
     std::cout << "Inserire dati nuovo Volo:\n";
 
@@ -316,6 +326,19 @@ void CLI::createFlightWizard() {
             std::cout << "Errore: input non valido\n";
     } while (departureAirportId == -1);
 
+    printAllAirports(airports);
+
+    
+    do {
+        std::cout << "Orario di partenza (formato YYYY-MM-DD HH:MM): ";
+        std::getline(std::cin, departureTimeDateStr);
+        optTime = stringToTimePoint(departureTimeDateStr);
+        if (optTime.has_value())
+            departureTime = optTime.value();
+        else
+            std::cout << "Errore: input non valido\n";
+    } while (!optTime.has_value());
+
     do {
         std::cout << "Id aeroporto di arrivo: ";
         std::getline(std::cin, arrivalAirportIdStr);
@@ -324,22 +347,13 @@ void CLI::createFlightWizard() {
             std::cout << "Errore: input non valido\n";
     } while (arrivalAirportId == -1);
 
-    do {
-        std::cout << "Orario di partenza: ";
-        std::getline(std::cin, departureTimeStr);
-        optTime = stringToTimePoint(departureTimeStr);
-        if (optTime.has_value())
-            departureTime = optTime.value();
-        else
-            std::cout << "Errore: input non valido\n";
-    } while (!optTime.has_value());
 
     do {
-        std::cout << "Orario di arrivo: ";
-        std::getline(std::cin, arrivalTimeStr);
-        optTime = stringToTimePoint(arrivalTimeStr);
+        std::cout << "Orario di arrivo (formato YYYY-MM-DD HH:MM): ";
+        std::getline(std::cin, arrivalTimeDateStr);
+        optTime = stringToTimePoint(arrivalTimeDateStr);
         if (optTime.has_value())
-            departureTime = optTime.value();
+            arrivalTime = optTime.value();
         else
             std::cout << "Errore: input non valido\n";
     } while (!optTime.has_value());
@@ -351,10 +365,18 @@ void CLI::createFlightWizard() {
         if (totalSeats == -1)
             std::cout << "Errore: input non valido\n";
     } while (totalSeats == -1);
-    std::cout << "Prezzo: ";
+    
+
+    do {
+        std::cout << "Prezzo: ";
+        std::getline(std::cin, priceStr);
+        price = stringToPositiveInteger(priceStr);
+        if (price == -1)
+            std::cout << "Errore: input non valido\n";
+    } while (price == -1);
 
 
-    bool result = adminService.createFlight(arrivalAirportId, departureAirportId, departureTime, arrivalTime, price, totalSeats);
+    bool result = adminService.createFlight(departureAirportId, arrivalAirportId, departureTime, arrivalTime, price, totalSeats);
 
     if (result)
         std::cout << "Volo creato con successo!\n";
@@ -365,6 +387,85 @@ void CLI::createFlightWizard() {
 }
 
 void CLI::manageSingleFlight(const unsigned int id) {
+    bool editing = true;
+    while (editing) {
+        const Flight *flight = adminService.getFlight(id);
+        if (flight == nullptr) {
+            std::cout << "Volo con id: " << id << " non trovato\n";
+            return;
+        }
+
+        const Airport *departureAirport = adminService.getAirport(flight->getDepartureAirportId());
+        const Airport *arrivalAirport = adminService.getAirport(flight->getArrivalAirportId());
+
+        std::cout << "Volo selezionato:\n";
+        std::cout << "ID:" << flight->getId() << "\t";
+        std::cout << "Aeroporto di partenza:" << departureAirport->getIata()<< ", " << departureAirport->getName() << "\t\t";
+        std::cout << "Aeroporto di arrivo:" << arrivalAirport->getIata()<< ", " << arrivalAirport->getName() << "\t\t";
+        std::cout << "Data e ora di partenza:" << flight->getDepartureTime() << "\t\t";
+        std::cout << "Data e ora di partenza:" << flight->getArrivalTime() << "\t\t";
+        std::cout << "Prezzo:" << flight->getPrice() << "\t\t";
+        std::cout << "Posti totali:" << flight->getTotalSeats() << "\t\t";
+        std::cout << "Posti disponibili:" << flight->getTotalSeats() - flight->getBookedSeats() << "\t\t";
+        std::cout << std::endl;
+        std::cout << "1 - Modifica Aeroporto di partenza\n";
+        std::cout << "2 - Modifica Aeroporto di arrivo\n";
+        std::cout << "3 - Modifica data e ora di partenza\n";
+        std::cout << "4 - Modifica data e ora di arrivo\n";
+        std::cout << "5 - Modifica prezzo\n";
+        std::cout << "6 - Modifica posti totali\n";
+        std::cout << "7 - Elimina\n";
+        std::cout << "0 - Indietro\n";
+
+        char subChoice;
+        std::cin >> subChoice;
+        std::string userInput;
+        std::cin.ignore();
+        switch (subChoice) {
+            case '1': {
+                std::string formattedIata;
+                do {
+                    std::cout << "Inserisci nuovo id aeroporto di partenza: ";
+                    std::getline(std::cin, userInput);
+                    std::cout << std::endl;
+                    formattedIata = iataFormat(userInput);
+                    if (formattedIata == "")
+                        std::cout << "Il codice IATA deve avere esattemente 3 caratteri!\n";
+                } while (formattedIata == "");
+                //adminService.modifyAirportIATA(airport->getId(), formattedIata);
+                break;
+            }
+            case '2':
+                std::cout << "Inserisci nuova Nazione: ";
+                std::getline(std::cin, userInput);
+                std::cout << std::endl;
+                //adminService.modifyAirportNation(airport->getId(), userInput);
+                break;
+            case '3':
+                std::cout << "Inserisci nuova Città: ";
+                std::getline(std::cin, userInput);
+                std::cout << std::endl;
+                //adminService.modifyAirportCity(airport->getId(), userInput);
+                break;
+            case '4':
+                std::cout << "Inserisci nuovo Nome: ";
+                std::getline(std::cin, userInput);
+                std::cout << std::endl;
+                //adminService.modifyAirportName(airport->getId(), userInput);
+                break;
+            case '5':
+                std::cout << "Aeroporto eliminato!\n";
+                adminService.deleteAirport(id);
+                editing = false;
+                break;
+            case '0':
+                editing = false;
+                break;
+            default:
+                std::cout << "Opzione non valida\n";
+                break;
+        }
+    }
 }
 
 void CLI::adminAirportsMenu() {
@@ -404,6 +505,7 @@ void CLI::adminFlightsMenu() {
     while (true) {
         std::vector<const Flight *> flights = adminService.getAllFlights();
         unsigned int flightsNumber = flights.size();
+
         std::cout << "Trovati " << flightsNumber << " voli.\n";
         if (flightsNumber == 0)
             std::cout << "Premere n per creare un nuovo volo\n";
@@ -430,7 +532,6 @@ void CLI::adminFlightsMenu() {
         }
     }
 }
-
 
 void CLI::loginMenu() {
     bool running = true;

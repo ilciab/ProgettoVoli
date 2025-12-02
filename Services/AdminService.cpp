@@ -33,9 +33,26 @@ void AdminService::modifyAirportIATA(const unsigned int airportId, const std::st
 void AdminService::deleteAirport(const unsigned int airportId) const { airportRepo.remove(airportId); }
 
 
-bool AdminService::createFlight(const unsigned int arrivalAirportId, const unsigned int departureAirportId,
+bool AdminService::createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
                                 const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats) {
-    //flightRepo.createFlight()
+    
+    if(arrivalTime<=departureTime){
+        std::cout<<"Tempo sbagliato\n";
+        return false;
+    }
+    
+    if(departureAirportId == arrivalAirportId){
+        std::cout<<"Id uguale\n";
+        return false;
+    }
+
+    if(airportRepo.getById(departureAirportId) == nullptr or airportRepo.getById(arrivalAirportId) == nullptr){
+        std::cout<<"Id inesistente\n";
+        return false;
+    }
+
+    flightRepo.createFlight(departureAirportId, arrivalAirportId, departureTime, arrivalTime, price, totalSeats);
+
     return true;
 }
 

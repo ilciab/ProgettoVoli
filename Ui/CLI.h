@@ -23,14 +23,16 @@ class CLI {
               adminService(admin_service) {
         }
 
-        void adminMenu();
 
+        std::string &timepointToString(std::chrono::system_clock::time_point tp);
+
+        void adminMenu();
         void adminUsersMenu();
         void printAllUsers(const std::vector<const User*> &users) const;
         void printAllAirports(const std::vector<const Airport*> &airports) const;
         void printAllFlights(const std::vector<const Flight*> &flights) const;
 
-        //static int stringToPositiveInteger(const std::string &string);
+
 
 
         void adminAirportsMenu();

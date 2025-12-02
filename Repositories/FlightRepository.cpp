@@ -59,7 +59,7 @@ void FlightRepository::write() {
 
 void FlightRepository::load() {
     std::fstream file = openFile(path, std::ios::in | std::ios::binary);
-    unsigned int largestId;
+    unsigned int largestId = 0;
     while (true) {
         unsigned int id;
         unsigned int departureAirportId;
@@ -79,6 +79,7 @@ void FlightRepository::load() {
         file.read(reinterpret_cast<char *>(&totalSeats), sizeof(totalSeats));
         file.read(reinterpret_cast<char *>(&price), sizeof(price));
 
+
         auto departureTime = std::chrono::system_clock::time_point(std::chrono::seconds(departureSeconds));
         auto arrivalTime = std::chrono::system_clock::time_point(std::chrono::seconds(arrivalSeconds));
         if (file.fail())
@@ -94,11 +95,11 @@ void FlightRepository::load() {
 }
 
 std::vector<const Flight *> FlightRepository::getAll() {
-    std::vector<const Flight *> flights;
+    std::vector<const Flight *> result;
     for (const auto &flight: flights) {
-        flights.push_back(flight);
+        result.push_back(flight.get());
     }
-    return flights;
+    return result;
 }
 
 void FlightRepository::setFlightDepartureAirport(unsigned int flightId, unsigned int departureAirportId) {
