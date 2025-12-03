@@ -13,6 +13,8 @@ add_executable(ProgettoVoli main.cpp
         Ui/CLI.h
         Services/AuthService.cpp
         Services/AuthService.h
+        Services/CustomerService.h
+        Services/CustomerService.cpp
         Domain/Customer.h
         Services/AdminService.cpp
         Services/AdminService.h

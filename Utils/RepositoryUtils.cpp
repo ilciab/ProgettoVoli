@@ -40,7 +40,7 @@ std::string readBinaryString(std::fstream &file) {
 std::string timePointToString(const std::chrono::system_clock::time_point &tp) {
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
     std::stringstream ss;
-    ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
+    ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M");
     return ss.str();
 };
 

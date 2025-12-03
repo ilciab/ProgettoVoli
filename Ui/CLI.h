@@ -7,6 +7,7 @@
 #include "../Services/AuthService.h"
 #include "../Domain/UserStruct.h"
 #include "../Services/AdminService.h"
+#include "../Services/CustomerService.h"
 
 
 class CLI {
@@ -15,6 +16,7 @@ class CLI {
         std::optional<UserStruct> userStruct;
         AuthService& authService;
         AdminService& adminService;
+        CustomerService& customerService;
 
 
     public:
@@ -24,15 +26,13 @@ class CLI {
         }
 
 
-        std::string &timepointToString(std::chrono::system_clock::time_point tp);
+        std::string timepointToString(std::chrono::system_clock::time_point tp);
 
         void adminMenu();
         void adminUsersMenu();
         void printAllUsers(const std::vector<const User*> &users) const;
         void printAllAirports(const std::vector<const Airport*> &airports) const;
         void printAllFlights(const std::vector<const Flight*> &flights) const;
-
-
 
 
         void adminAirportsMenu();
@@ -46,7 +46,7 @@ class CLI {
         void adminBookingsMenu();
         void customerMenu();
         void customerProfileMenu();
-        void customerAirportsMenu();
+        //void customerAirportsMenu();
         void customerFlightsMenu();
         void customerBookingsMenu();
         void loginMenu();
@@ -60,7 +60,6 @@ class CLI {
 
 
 };
-
 
 
 #endif //CLI_H

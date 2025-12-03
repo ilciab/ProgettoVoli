@@ -20,7 +20,7 @@ class AuthService {
 
         void close();
 
-        explicit AuthService(UserRepository&);
+        explicit AuthService(UserRepository &repo) : repo(repo) {}
 };
 
 

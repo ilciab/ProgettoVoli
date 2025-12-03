@@ -39,8 +39,6 @@ explicit AdminService(UserRepository &user_repo, AirportRepository &airport_repo
     void deleteAirport(unsigned int airportId) const;
 
 
-
-
     bool createFlight(const unsigned int arrivalAirportId, const unsigned int departureAirportId,
         const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats);
     std::vector<const Flight *> getAllFlights();

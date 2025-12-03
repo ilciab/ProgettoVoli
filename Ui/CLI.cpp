@@ -10,22 +10,52 @@
 #include "../Utils/RepositoryUtils.h"
 
 
-std::string &timepointToString(std::chrono::system_clock::time_point tp){
+std::string timepointToString(std::chrono::system_clock::time_point tp){
     std::string timeDateStr = std::format("{:%Y-%m-%d %H:%M}", tp);
     return timeDateStr;
+}
+
+void CLI::customerBookingsMenu(){
+    std::vector<const Flight*> flights = adminService.getAllFlights();
+    int selectedFlightId;
+
+    if(flights.size()== 0){
+        std::cout<<"Errore: non sono presenti voli nel database, torna più tardi\n";
+        return;
+    }
+        printAllFlights(flights);
+
+
+    do {
+        std::cout << "Id volo da prenotare: ";
+        std::string selectedFlightIdStr;
+        std::getline(std::cin, selectedFlightIdStr);
+        selectedFlightId = stringToPositiveInteger(selectedFlightIdStr);
+        if (selectedFlightId == -1)
+            std::cout << "Errore: input non valido\n";
+    } while (selectedFlightId == -1);
+    
 }
 
 void CLI::customerMenu() {
     unsigned int choice = 1;
     while (choice != 0) {
-        std::cout << "Customer Panel:\n";
-        std::cout << "";
-        std::cout << "";
+        std::cout << "--- MENU PRINCIPALE --\n";
+        std::cout << "1 - Prenota volo\n";
+        std::cout << "2 - Modifica Profilo\n";
         std::cout << " 0 - Logout\n";
 
 
         std::cin >> choice;
         switch (choice) {
+
+            case 1: {
+                customerBookingsMenu();
+
+                break;
+            }
+
+
             case 0:
                 userStruct = std::nullopt;
                 return;
@@ -40,13 +70,13 @@ void CLI::customerMenu() {
 void CLI::adminMenu() {
     unsigned int choice = 1;
     while (choice != 0) {
-        std::cout << "Admin Panel:\n";
+        std::cout << "----- MENU ADMIN -----\n";
         std::cout << " 1 - Modify and view Users\n";
         std::cout << " 2 - Modify and view Airports\n";
         std::cout << " 3 - Modify and view Flights\n";
         std::cout << " 4 - Modify and view Bookings\n";
         std::cout << " 0 - Logout\n";
-
+        std::cout << "----------------------\n";
         std::cin >> choice;
         switch (choice) {
             case 1:
@@ -177,19 +207,23 @@ void CLI::printAllAirports(const std::vector<const Airport *> &airports) const {
 }
 
 void CLI::printAllFlights(const std::vector<const Flight *> &flights) const {
-    std::cout << "Lista Voli:\n";
+    std::cout << "------- LISTA VOLI -------\n";
+    std::cout<<std::endl;
     for (const Flight *flight: flights) {
         std::string departureAirportName = adminService.getAirport(flight->getDepartureAirportId())->getName();
         std::string arrivalAirportName = adminService.getAirport(flight->getArrivalAirportId())->getName();
-
         std::cout << "ID:" << flight->getId() << "\t";
-        std::cout << "Aeroporto di Partenza" << departureAirportName << "\t";
-        std::cout << "Aeroporto di Arrivo" << arrivalAirportName << "\t";
-        std::cout << "Orario di Partenza: " << timePointToString(flight->getDepartureTime()) << "\t";
-        std::cout << "Orario di Arrivo: " << timePointToString(flight->getArrivalTime()) << "\t";
+        std::cout<<std::endl;
+        std::cout << departureAirportName << " -> " << arrivalAirportName;
+        std::cout<<std::endl;
+        std::cout << "Partenza: " << timePointToString(flight->getDepartureTime()) << "\t";
+        std::cout<<std::endl;
+        std::cout << "Arrivo: " << timePointToString(flight->getArrivalTime()) << "\t";
+        std::cout<<std::endl;
         std::cout << "Prezzo: $" << flight->getPrice() << "\t";
         std::cout << "Posti totali: " << flight->getTotalSeats() << "\t";
         std::cout << "Posti occupati: " << flight->getBookedSeats() << "\t";
+        std::cout<<std::endl<<std::endl;
     }
 }
 
@@ -312,9 +346,14 @@ void CLI::createFlightWizard() {
     std::cout << "--- CREAZIONE VOLO ---\n";
 
     std::vector<const Airport *> airports = adminService.getAllAirports();
+
+    if(airports.size()<2){
+        std::cout<<"Errore: devono esistere almeno 2 aeroporti\n";
+        return;
+    }
+
+
     printAllAirports(airports);
-
-
 
     std::cout << "Inserire dati nuovo Volo:\n";
 
@@ -325,9 +364,6 @@ void CLI::createFlightWizard() {
         if (departureAirportId == -1)
             std::cout << "Errore: input non valido\n";
     } while (departureAirportId == -1);
-
-    printAllAirports(airports);
-
     
     do {
         std::cout << "Orario di partenza (formato YYYY-MM-DD HH:MM): ";
@@ -338,6 +374,8 @@ void CLI::createFlightWizard() {
         else
             std::cout << "Errore: input non valido\n";
     } while (!optTime.has_value());
+
+    printAllAirports(airports);
 
     do {
         std::cout << "Id aeroporto di arrivo: ";
@@ -397,17 +435,24 @@ void CLI::manageSingleFlight(const unsigned int id) {
 
         const Airport *departureAirport = adminService.getAirport(flight->getDepartureAirportId());
         const Airport *arrivalAirport = adminService.getAirport(flight->getArrivalAirportId());
+        std::string departureAirportName = adminService.getAirport(flight->getDepartureAirportId())->getName();
+        std::string arrivalAirportName = adminService.getAirport(flight->getArrivalAirportId())->getName();
 
         std::cout << "Volo selezionato:\n";
+    
         std::cout << "ID:" << flight->getId() << "\t";
-        std::cout << "Aeroporto di partenza:" << departureAirport->getIata()<< ", " << departureAirport->getName() << "\t\t";
-        std::cout << "Aeroporto di arrivo:" << arrivalAirport->getIata()<< ", " << arrivalAirport->getName() << "\t\t";
-        std::cout << "Data e ora di partenza:" << flight->getDepartureTime() << "\t\t";
-        std::cout << "Data e ora di partenza:" << flight->getArrivalTime() << "\t\t";
-        std::cout << "Prezzo:" << flight->getPrice() << "\t\t";
-        std::cout << "Posti totali:" << flight->getTotalSeats() << "\t\t";
-        std::cout << "Posti disponibili:" << flight->getTotalSeats() - flight->getBookedSeats() << "\t\t";
-        std::cout << std::endl;
+        std::cout<<std::endl;
+        std::cout << departureAirportName << " -> " << arrivalAirportName;
+        std::cout<<std::endl;
+        std::cout << "Partenza: " << timePointToString(flight->getDepartureTime()) << "\t";
+        std::cout<<std::endl;
+        std::cout << "Arrivo: " << timePointToString(flight->getArrivalTime()) << "\t";
+        std::cout<<std::endl;
+        std::cout << "Prezzo: $" << flight->getPrice() << "\t";
+        std::cout << "Posti totali: " << flight->getTotalSeats() << "\t";
+        std::cout << "Posti occupati: " << flight->getBookedSeats() << "\t";
+        std::cout<<std::endl<<std::endl;
+
         std::cout << "1 - Modifica Aeroporto di partenza\n";
         std::cout << "2 - Modifica Aeroporto di arrivo\n";
         std::cout << "3 - Modifica data e ora di partenza\n";

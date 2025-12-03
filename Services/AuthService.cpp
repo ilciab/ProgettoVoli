@@ -7,9 +7,6 @@
 #include "../Domain/UserStruct.h"
 
 
-AuthService::AuthService(UserRepository &repo) : repo(repo) {
-}
-
 
 std::optional<UserStruct> AuthService::login(const std::string &email, const std::string &password) {
     UserStruct loginResult;
