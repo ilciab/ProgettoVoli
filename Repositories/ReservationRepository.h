@@ -1,0 +1,13 @@
+//
+// Created by ilciab on 12/4/25.
+//
+
+#ifndef PROGETTOVOLI_RESERVATIONREPOSITORY_H
+#define PROGETTOVOLI_RESERVATIONREPOSITORY_H
+
+
+class ReservationRepository {
+};
+
+
+#endif //PROGETTOVOLI_RESERVATIONREPOSITORY_H
