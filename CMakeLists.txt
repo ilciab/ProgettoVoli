@@ -33,4 +33,7 @@ add_executable(ProgettoVoli main.cpp
         Repositories/FlightRepository.cpp
         Repositories/FlightRepository.h
         Utils/RepositoryUtils.cpp
+        Domain/Reservation.h
+        Repositories/ReservationRepository.cpp
+        Repositories/ReservationRepository.h
 )

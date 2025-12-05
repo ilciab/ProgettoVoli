@@ -20,19 +20,23 @@ class CLI {
 
 
     public:
-        CLI(AuthService &auth_service, AdminService &admin_service)
+        CLI(AuthService &auth_service, AdminService &admin_service, CustomerService &customerService)
             : authService(auth_service),
-              adminService(admin_service) {
+              adminService(admin_service),
+              customerService((customerService)) {
         }
 
 
         std::string timepointToString(std::chrono::system_clock::time_point tp);
+
+        void clearScreen() const;
 
         void adminMenu();
         void adminUsersMenu();
         void printAllUsers(const std::vector<const User*> &users) const;
         void printAllAirports(const std::vector<const Airport*> &airports) const;
         void printAllFlights(const std::vector<const Flight*> &flights) const;
+        void printAllUserReservations(const std::vector<const Reservation*> &reservations, unsigned int userId) const;
 
 
         void adminAirportsMenu();
@@ -46,8 +50,6 @@ class CLI {
         void adminBookingsMenu();
         void customerMenu();
         void customerProfileMenu();
-        //void customerAirportsMenu();
-        void customerFlightsMenu();
         void customerBookingsMenu();
         void loginMenu();
 

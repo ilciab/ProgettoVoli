@@ -17,14 +17,14 @@ std::string timepointToString(std::chrono::system_clock::time_point tp){
 
 void CLI::customerBookingsMenu(){
     std::vector<const Flight*> flights = adminService.getAllFlights();
-    int selectedFlightId;
+    int selectedFlightId, ticketsNumber;
+    std::string choice;
 
     if(flights.size()== 0){
         std::cout<<"Errore: non sono presenti voli nel database, torna più tardi\n";
         return;
     }
         printAllFlights(flights);
-
 
     do {
         std::cout << "Id volo da prenotare: ";
@@ -34,7 +34,22 @@ void CLI::customerBookingsMenu(){
         if (selectedFlightId == -1)
             std::cout << "Errore: input non valido\n";
     } while (selectedFlightId == -1);
-    
+
+    do {
+        std::cout << "Numero di biglietti da acquistare: ";
+        std::string input;
+        std::getline(std::cin, input);
+        ticketsNumber = stringToPositiveInteger(input);
+        if (ticketsNumber == -1)
+            std::cout << "Errore: input non valido\n";
+    }while (ticketsNumber == -1);
+
+    std::cout<< "Totale: $"<< adminService.getFlight(selectedFlightId)->getPrice() * ticketsNumber << std::endl;
+    std::cout<< "Acquistare? Y/N";
+    std::cin >> choice;
+    if (choice == "y" or choice == "Y") {
+        customerService.book(userStruct->id.value(),selectedFlightId, ticketsNumber);
+    }
 }
 
 void CLI::customerMenu() {
@@ -43,18 +58,32 @@ void CLI::customerMenu() {
         std::cout << "--- MENU PRINCIPALE --\n";
         std::cout << "1 - Prenota volo\n";
         std::cout << "2 - Modifica Profilo\n";
-        std::cout << " 0 - Logout\n";
+        std::cout << "3 - Le mie prenotazioni\n";
 
+        std::cout << " 0 - Logout\n";
 
         std::cin >> choice;
         switch (choice) {
 
             case 1: {
                 customerBookingsMenu();
-
                 break;
             }
 
+            case 2: {
+                std::cout << "Non implementato\n";
+                break;
+            }
+
+            case 3: {
+                std::vector<const Reservation*> reservations = customerService.getAllReservations();
+                if(reservations.size()== 0){
+                    std::cout<<"Errore: non sono prenotazioni a tuo nome\n";
+                    return;
+                }
+                printAllUserReservations(reservations, userStruct->id.value());
+                break;
+            }
 
             case 0:
                 userStruct = std::nullopt;
@@ -66,6 +95,10 @@ void CLI::customerMenu() {
     }
 }
 
+
+void CLI::clearScreen() const {
+    std::cout << "\033[2J\033[1;1H";
+}
 
 void CLI::adminMenu() {
     unsigned int choice = 1;
@@ -227,6 +260,26 @@ void CLI::printAllFlights(const std::vector<const Flight *> &flights) const {
     }
 }
 
+void CLI::printAllUserReservations(const std::vector<const Reservation*> &reservations, unsigned int userId) const {
+    std::cout << "--- LISTA PRENOTAZIONI ---\n";
+    std::cout<<std::endl;
+    for (const Reservation *reservation: reservations) {
+        std::string userName, flightDepartureAirportName, flightArrivalAirportName;
+        userName =  adminService.getUser(reservation->getOwnerUserId())->getName();
+        flightDepartureAirportName = adminService.getAirport(adminService.getFlight(reservation->getFlightId())->getDepartureAirportId())->getName();
+        flightArrivalAirportName = adminService.getAirport(adminService.getFlight(reservation->getFlightId())->getArrivalAirportId())->getName(); //todo assolutamente aggiusta sto obbrobrio
+        std::cout << "ID:" << reservation->getId() << "\t";
+        std::cout<<std::endl;
+        std::cout << "Nome utente: " << userName << "\t";
+	std::cout<<std::endl;
+        std::cout << "Volo: " << flightDepartureAirportName << " --> " << flightArrivalAirportName << "\t"; //todo aggiungere orario di partenza e di arrivo (data anche?)
+        std::cout<<std::endl<<std::endl;
+        std::cout << "---------------------------\n";
+        std::cout<<std::endl<<std::endl;
+    }
+};
+
+
 void CLI::createAirportWizard() {
     std::cin.ignore();
     std::string iata, nation, city, name;
@@ -343,7 +396,7 @@ void CLI::createFlightWizard() {
     std::chrono::system_clock::time_point departureTime, arrivalTime;
     std::optional<std::chrono::system_clock::time_point> optTime;
 
-    std::cout << "--- CREAZIONE VOLO ---\n";
+    std::cout << "------ CREAZIONE VOLO ------\n";
 
     std::vector<const Airport *> airports = adminService.getAllAirports();
 
@@ -581,6 +634,7 @@ void CLI::adminFlightsMenu() {
 void CLI::loginMenu() {
     bool running = true;
     while (running) {
+        clearScreen();
         int choice;
         std::cout << "Benvenuto su Ciab Booking Service\n\n";
         std::cout << "1 - Accedi\n";
@@ -600,7 +654,6 @@ void CLI::loginMenu() {
                 running = false;
                 break;
             default:
-                std::cout << "Opzione non valida\n";
                 break;
         }
 
@@ -613,6 +666,7 @@ void CLI::loginMenu() {
     }
     authService.close();
     adminService.close();
+    customerService.close();
 }
 
 std::optional<UserStruct> CLI::login() {
@@ -632,6 +686,9 @@ std::optional<UserStruct> CLI::login() {
     return result;
 }
 
+
+//TODO (non qui) wait a customer \quando stampa il menu
+
 std::string CLI::iataFormat(std::string iata) {
     if (iata.length() != 3)
         return "";
@@ -646,6 +703,8 @@ std::string CLI::iataFormat(std::string iata) {
 
 
 std::optional<UserStruct> CLI::signIn() {
+    clearScreen();
+    std::cout << "------ Registrazione ------\n";
     std::string name, email, password;
     std::cout << "Name: ";
     std::cin >> name;
@@ -653,8 +712,12 @@ std::optional<UserStruct> CLI::signIn() {
     std::cin >> email;
     std::cout << "Password: ";
     std::cin >> password;
+    std::cout << "---------------------------\n";
     std::optional<UserStruct> result = authService.signIn(name, email, password);
     if (!result.has_value())
         std::cout << "Qualcosa è andato storto";
+    std::cout<<"Premi invio per continuare\n";
+    std::cin.ignore();
+    std::cin.get();
     return result;
 }

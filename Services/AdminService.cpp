@@ -91,3 +91,4 @@ bool AdminService::modifyFlightArrivalTime(unsigned int flightId, std::string ne
 void AdminService::modifyFlightPrice(const unsigned int flightId, const float newPrice) const { flightRepo.setFlightPrice(flightId, newPrice); }
 void AdminService::modifyFlightTotalSeats(const unsigned int flightId, const unsigned int newTotalSeats) const { flightRepo.setFlightTotalSeats(flightId, newTotalSeats); }
 void AdminService::deleteFlight(const unsigned int flightId) const { flightRepo.remove(flightId); }
+

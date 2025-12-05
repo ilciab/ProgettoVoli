@@ -2,19 +2,30 @@
 // Created by ciabu on 03/12/2025.
 //
 
-#ifndef CLI_H
-#define CLI_H
+#ifndef CUSTOMERSERVICE_H
+#define CUSTOMERSERVICE_H
 
 
-#include "../Repositories/AirportRepository.h";
+#include "../Repositories/FlightRepository.h"
+#include "../Repositories/ReservationRepository.h"
 
-class CustomerService{
-    private:
-        AirportRepository& airportRepo;
+class CustomerService {
+private:
+    FlightRepository &flightRepo;
+    ReservationRepository &reservationRepo;
 
-    public:
-        explicit CustomerService(AirportRepository& airportRepo) : airportRepo(airportRepo) {};
+public:
+    explicit CustomerService(FlightRepository &flightRepo, ReservationRepository &reservationRepo) :
+    flightRepo(flightRepo),
+    reservationRepo(reservationRepo) {};
+
+    void book(unsigned int userId, unsigned int flightId, unsigned int ticketsNumber) const;
+
+    std::vector<const Reservation*> getAllReservations() const;
+
+
+    void close();
 };
 
 
-#endif //CLI_H
+#endif //CUSTOMERSERVICE_H

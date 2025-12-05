@@ -9,8 +9,8 @@
 
 
 class FlightRepository : public RepositoryInterface<Flight> {
-    std::vector<std::unique_ptr<Flight> > flights;
 
+    std::vector<std::unique_ptr<Flight> > flights;
     Flight *getById_internal(unsigned int id) override;
 
     IdGenerator idGen;
