@@ -60,14 +60,20 @@ void CLI::customerBookingsMenu(){
     std::cin >> choice;
     if (choice == "y" or choice == "Y") {
         customerService.book(userStruct->id.value(),selectedFlightId, ticketsNumber);
+        std::cout<<"Volo aquistato.\n";
     }
+    else
+        std::cout<<"Volo non aquistato.\n";
+    std::cout<<"\nPremi invio per continuare\n";
+    std::cin.ignore();
+    std::cin.get();
 }
 
 void CLI::customerMenu() {
     unsigned int choice = 1;
     while (choice != 0) {
         clearScreen();
-        std::cout << "--- MENU PRINCIPALE --\n";
+        std::cout << "--- MENU PRINCIPALE ---\n";
         std::cout << "1 - Prenota volo\n";
         std::cout << "2 - Modifica Profilo\n";
         std::cout << "3 - Le mie prenotazioni\n";
@@ -91,7 +97,10 @@ void CLI::customerMenu() {
                 std::vector<const Reservation*> reservations = customerService.getAllReservations();
                 if(reservations.size()== 0){
                     std::cout<<"Errore: non sono prenotazioni a tuo nome\n";
-                    return;
+                    std::cout<<"\nPremi invio per continuare\n";
+                    std::cin.ignore();
+                    std::cin.get();
+                    break;
                 }
                 printAllUserReservations(reservations, userStruct->id.value());
                 break;
@@ -276,7 +285,6 @@ void CLI::printAllUserReservations(const std::vector<const Reservation*> &reserv
     clearScreen();
     std::cout << "--- LISTA PRENOTAZIONI ---\n";
     std::cout<<std::endl;
-
     for (const Reservation *reservation: reservations) {
         const Airport *departureAirport, *arrivalAirport;
         const Flight* flight = adminService.getFlight(reservation->getFlightId());

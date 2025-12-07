@@ -1,6 +1,7 @@
 # CMake build folders
 /cmake-build-*/
 /build/
+.cache
 
 # CLion project files
 .idea/
