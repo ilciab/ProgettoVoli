@@ -9,6 +9,14 @@ void CustomerService::book(unsigned int userId, unsigned int flightId, unsigned 
         reservationRepo.createReservation(userId,flightId);
 }
 
+const Flight * CustomerService::getFlight(unsigned int flightId) {
+    return flightRepo.getById(flightId);
+}
+
+std::vector<const Flight *> CustomerService::getAllFlights() {
+    return flightRepo.getAll();
+}
+
 std::vector<const Reservation *> CustomerService::getAllReservations() const {
     return reservationRepo.getAll();
 }

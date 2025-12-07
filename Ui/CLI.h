@@ -27,7 +27,7 @@ class CLI {
         }
 
 
-        std::string timepointToString(std::chrono::system_clock::time_point tp);
+        std::string timepointToString(std::chrono::system_clock::time_point tp) const;
 
         void clearScreen() const;
 

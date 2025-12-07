@@ -21,7 +21,11 @@ public:
 
     void book(unsigned int userId, unsigned int flightId, unsigned int ticketsNumber) const;
 
+    std::vector<const Flight *> getAllFlights();
+    const Flight* getFlight(unsigned int flightId);
     std::vector<const Reservation*> getAllReservations() const;
+
+
 
 
     void close();
