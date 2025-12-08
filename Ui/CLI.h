@@ -20,10 +20,10 @@ class CLI {
 
 
     public:
-        CLI(AuthService &auth_service, AdminService &admin_service, CustomerService &customerService)
-            : authService(auth_service),
-              adminService(admin_service),
-              customerService((customerService)) {
+        CLI(AuthService &authService, AdminService &adminService, CustomerService &customerService)
+            : authService(authService),
+              adminService(adminService),
+              customerService(customerService) {
         }
 
 
@@ -41,11 +41,11 @@ class CLI {
 
         void adminAirportsMenu();
         void createAirportWizard();
-        void manageSingleAirport(const unsigned int id);
+        void manageSingleAirport(unsigned int id);
 
         void adminFlightsMenu();
         void createFlightWizard();
-        void manageSingleFlight(const unsigned int id);
+        void manageSingleFlight(unsigned int id);
 
         void adminBookingsMenu();
         void customerMenu();
@@ -59,7 +59,6 @@ class CLI {
         std::optional<UserStruct> login();
 
         std::string iataFormat(std::string iata);
-
 
 };
 
