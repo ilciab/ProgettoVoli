@@ -10,6 +10,8 @@
 #include "../Utils/RepositoryUtils.h"
 
 
+//todo mettere i wait ai print fuori e i clearscr pure
+
 std::string CLI::timepointToString(std::chrono::system_clock::time_point tp) const {
     std::string timeDateStr = std::format("{:%Y-%m-%d %H:%M}", tp);
     return timeDateStr;
@@ -19,17 +21,25 @@ void CLI::clearScreen() const {
     std::cout << "\033[2J\033[1;1H\033[3J" << std::flush;
 }
 
+void CLI::waitInput() const {
+    std::cout<<"\nPremi invio per continuare\n";
+    std::cin.ignore();
+    std::cin.get();
+}
+
 void CLI::customerBookingsMenu(){
     clearScreen();
-    std::vector<const Flight*> flights = adminService.getAllFlights();
+    std::vector<const Flight*> flights = customerService.getAllFlights();
     const Flight* selectedFlight;
     int selectedFlightId, ticketsNumber;
     std::string choice;
 
     if(flights.size()== 0){
         std::cout<<"Errore: non sono presenti voli nel database, torna più tardi\n";
+        waitInput();
         return;
     }
+        clearScreen();
         printAllFlights(flights);
 
     std::cin.ignore();
@@ -64,9 +74,7 @@ void CLI::customerBookingsMenu(){
     }
     else
         std::cout<<"Volo non aquistato.\n";
-    std::cout<<"\nPremi invio per continuare\n";
-    std::cin.ignore();
-    std::cin.get();
+    waitInput();
 }
 
 void CLI::customerMenu() {
@@ -97,12 +105,12 @@ void CLI::customerMenu() {
                 std::vector<const Reservation*> reservations = customerService.getAllReservations();
                 if(reservations.size()== 0){
                     std::cout<<"Errore: non sono prenotazioni a tuo nome\n";
-                    std::cout<<"\nPremi invio per continuare\n";
-                    std::cin.ignore();
-                    std::cin.get();
+                    waitInput();
                     break;
                 }
+                clearScreen();
                 printAllUserReservations(reservations, userStruct->id.value());
+                waitInput();
                 break;
             }
 
@@ -260,7 +268,6 @@ void CLI::printAllAirports(const std::vector<const Airport *> &airports) const {
 }
 
 void CLI::printAllFlights(const std::vector<const Flight *> &flights) const {
-    clearScreen();
     std::cout << "------- LISTA VOLI -------\n";
     std::cout<<std::endl;
     for (const Flight *flight: flights) {
@@ -282,24 +289,19 @@ void CLI::printAllFlights(const std::vector<const Flight *> &flights) const {
 }
 
 void CLI::printAllUserReservations(const std::vector<const Reservation*> &reservations, unsigned int userId) const {
-    clearScreen();
     std::cout << "--- LISTA PRENOTAZIONI ---\n";
     std::cout<<std::endl;
     for (const Reservation *reservation: reservations) {
         const Airport *departureAirport, *arrivalAirport;
-        const Flight* flight = adminService.getFlight(reservation->getFlightId());
-        departureAirport = adminService.getAirport(flight->getDepartureAirportId());
-        arrivalAirport = adminService.getAirport(flight->getArrivalAirportId());
+        const Flight* flight = customerService.getFlight(reservation->getFlightId());
+        departureAirport = customerService.getAirport(flight->getDepartureAirportId());
+        arrivalAirport = customerService.getAirport(flight->getArrivalAirportId());
         std::cout << "ID:" << reservation->getId()<<std::endl;
         std::cout << "Volo: " << departureAirport->getName() << " --> " << arrivalAirport->getName() << std::endl;
         std::cout << "Orario: " << timepointToString(flight->getDepartureTime()) << " --> " << timePointToString(flight->getArrivalTime()) << std::endl;
         std::cout<<std::endl;
         std::cout << "---------------------------\n";
     }
-
-    std::cout<<"\nPremi invio per continuare\n";
-    std::cin.ignore();
-    std::cin.get();
 };
 
 void CLI::createAirportWizard() {
@@ -404,9 +406,7 @@ void CLI::manageSingleAirport(const unsigned int id) {
                 adminService.deleteAirport(id);
                 std::cout << "Aeroporto eliminato!\n";
                 editing = false;
-                std::cout<<"Premi invio per continuare\n";
-                std::cin.ignore();
-                std::cin.get();
+                waitInput();
                 break;
             case '0':
                 editing = false;
@@ -468,7 +468,6 @@ void CLI::createFlightWizard() {
             std::cout << "Errore: input non valido\n";
     } while (arrivalAirportId == -1);
 
-
     do {
         std::cout << "Orario di arrivo (formato YYYY-MM-DD HH:MM): ";
         std::getline(std::cin, arrivalTimeDateStr);
@@ -486,7 +485,6 @@ void CLI::createFlightWizard() {
         if (totalSeats == -1)
             std::cout << "Errore: input non valido\n";
     } while (totalSeats == -1);
-    
 
     do {
         std::cout << "Prezzo: ";
@@ -680,7 +678,9 @@ void CLI::loginMenu() {
                 userStruct = login();
                 break;
             case 2:
+                clearScreen();
                 userStruct = signIn();
+                waitInput();
                 break;
             case 0:
                 running = false;
@@ -714,9 +714,7 @@ std::optional<UserStruct> CLI::login() {
     std::optional<UserStruct> result = authService.login(email, password);
     if (!result.has_value()) {
         std::cout << "Combinazione mail/password errata, riprova\n";
-        std::cout<<"Premi invio per continuare\n";
-        std::cin.ignore();
-        std::cin.get();
+        waitInput();
     }
 
     return result;
@@ -737,7 +735,6 @@ std::string CLI::iataFormat(std::string iata) {
 }
 
 std::optional<UserStruct> CLI::signIn() {
-    clearScreen();
     std::cout << "------ Registrazione ------\n";
     std::string name, email, password;
     std::cout << "Name: ";
@@ -750,8 +747,5 @@ std::optional<UserStruct> CLI::signIn() {
     std::optional<UserStruct> result = authService.signIn(name, email, password);
     if (!result.has_value())
         std::cout << "Qualcosa è andato storto";
-    std::cout<<"Premi invio per continuare\n";
-    std::cin.ignore();
-    std::cin.get();
     return result;
 }

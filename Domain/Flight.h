@@ -6,8 +6,6 @@
 #define PROGETTOVOLI_VOLO_H
 #include <chrono>
 
-#include "Airport.h"
-
 
 class Flight {
     const unsigned int id;

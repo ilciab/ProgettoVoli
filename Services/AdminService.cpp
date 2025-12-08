@@ -32,7 +32,6 @@ void AdminService::modifyAirportIATA(const unsigned int airportId, const std::st
 
 void AdminService::deleteAirport(const unsigned int airportId) const { airportRepo.remove(airportId); }
 
-
 bool AdminService::createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
                                 const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats) {
     

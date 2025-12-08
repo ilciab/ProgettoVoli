@@ -30,10 +30,6 @@ public:
     const Reservation* getReservation(unsigned int reservationId) const;
     std::vector<const Reservation*> getAllReservations() const;
 
-
-
-    //todo @Urgent in customer service getflight getAirport
-
     void close() const;
 };
 

@@ -16,10 +16,10 @@ class AdminService {
     FlightRepository& flightRepo;
 
 public:
-explicit AdminService(UserRepository &user_repo, AirportRepository &airport_repo, FlightRepository &flight_repo)
-        : userRepo(user_repo),
-        airportRepo(airport_repo),
-        flightRepo(flight_repo) {}
+explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, FlightRepository &flightRepo)
+        : userRepo(userRepo),
+        airportRepo(airportRepo),
+        flightRepo(flightRepo) {}
 
 
     std::vector<const User *> getAllUsers() const;
@@ -39,7 +39,7 @@ explicit AdminService(UserRepository &user_repo, AirportRepository &airport_repo
     void deleteAirport(unsigned int airportId) const;
 
 
-    bool createFlight(const unsigned int arrivalAirportId, const unsigned int departureAirportId,
+    bool createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
         const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats);
     std::vector<const Flight *> getAllFlights();
     const Flight* getFlight(unsigned int flightId);
