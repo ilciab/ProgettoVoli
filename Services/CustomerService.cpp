@@ -9,6 +9,8 @@ bool CustomerService::book(const unsigned int userId, const unsigned int flightI
     unsigned int freeSeats = flight->getTotalSeats() - flight->getBookedSeats();
     if(freeSeats<ticketsNumber)
         return false;
+    
+    flightRepo.setBookedSeats(flightId, flight->getBookedSeats() + ticketsNumber);    
 
     for (int i = 0; i<=ticketsNumber; i++){
         reservationRepo.createReservation(userId,flightId);
