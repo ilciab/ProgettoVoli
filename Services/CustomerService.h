@@ -22,7 +22,7 @@ public:
     flightRepo(flightRepo),
     reservationRepo(reservationRepo) {};
 
-    void book(unsigned int userId, unsigned int flightId, unsigned int ticketsNumber) const;
+    bool book(unsigned int userId, unsigned int flightId, unsigned int ticketsNumber) const;
 
     std::vector<const Flight *> getAllFlights();
     const Flight* getFlight(unsigned int flightId) const;

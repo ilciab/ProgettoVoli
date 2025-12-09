@@ -134,3 +134,7 @@ unsigned int FlightRepository::createFlight(const unsigned int departureAirportI
         departureTime, arrivalTime, price, totalSeats));
     return id;
 }
+
+void FlightRepository::setBookedSeats(const unsigned int flightId, const unsigned int bookedSeats){
+    getById_internal(flightId).st
+}

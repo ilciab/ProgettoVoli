@@ -251,7 +251,6 @@ void CLI::adminUsersMenu() {
 }
 
 void CLI::printAllAirports(const std::vector<const Airport *> &airports) const {
-    clearScreen();
     std::cout << "---- LISTA AEROPORTI -----\n";
     for (const Airport *airport: airports) {
         std::cout << "ID: " << airport->getId() << "\t";
@@ -262,9 +261,6 @@ void CLI::printAllAirports(const std::vector<const Airport *> &airports) const {
         std::cout << std::endl;
     }
     std::cout << "--------------------------\n";
-    std::cout<<"\nPremi invio per continuare\n";
-    std::cin.ignore();
-    std::cin.get();
 }
 
 void CLI::printAllFlights(const std::vector<const Flight *> &flights) const {
@@ -435,7 +431,7 @@ void CLI::createFlightWizard() {
         return;
     }
 
-
+    clearScreen();
     printAllAirports(airports);
 
     std::cout << "Inserire dati nuovo Volo:\n";
@@ -458,6 +454,7 @@ void CLI::createFlightWizard() {
             std::cout << "Errore: input non valido\n";
     } while (!optTime.has_value());
 
+    clearScreen();
     printAllAirports(airports);
 
     do {
@@ -477,6 +474,8 @@ void CLI::createFlightWizard() {
         else
             std::cout << "Errore: input non valido\n";
     } while (!optTime.has_value());
+    
+    std::cout<<std::endl;
 
     do {
         std::cout << "Posti totali: ";
@@ -497,17 +496,20 @@ void CLI::createFlightWizard() {
 
     bool result = adminService.createFlight(departureAirportId, arrivalAirportId, departureTime, arrivalTime, price, totalSeats);
 
+    std::cout << "---------------------------\n";
+
     if (result)
         std::cout << "Volo creato con successo!\n";
     else
         std::cout << "Errore: Impossibile creare il volo\n";
 
-    std::cout << "---------------------------\n";
+    waitInput();
 }
 
 void CLI::manageSingleFlight(const unsigned int id) {
     bool editing = true;
     while (editing) {
+        clearScreen();
         const Flight *flight = adminService.getFlight(id);
         if (flight == nullptr) {
             std::cout << "Volo con id: " << id << " non trovato\n";
@@ -589,6 +591,7 @@ void CLI::manageSingleFlight(const unsigned int id) {
                 break;
             default:
                 std::cout << "Opzione non valida\n";
+                waitInput();
                 break;
         }
     }
@@ -619,6 +622,7 @@ void CLI::adminAirportsMenu() {
 
             if (id == -1) {
                 std::cout << "Errore: ID non valido o input errato.\n\n";
+                waitInput();
                 continue;
             }
 
@@ -653,6 +657,7 @@ void CLI::adminFlightsMenu() {
 
             if (id == -1) {
                 std::cout << "Errore: ID non valido o input errato.\n\n";
+                waitInput();
                 continue;
             }
 
@@ -678,9 +683,7 @@ void CLI::loginMenu() {
                 userStruct = login();
                 break;
             case 2:
-                clearScreen();
                 userStruct = signIn();
-                waitInput();
                 break;
             case 0:
                 running = false;
@@ -735,6 +738,7 @@ std::string CLI::iataFormat(std::string iata) {
 }
 
 std::optional<UserStruct> CLI::signIn() {
+    clearScreen();
     std::cout << "------ Registrazione ------\n";
     std::string name, email, password;
     std::cout << "Name: ";
@@ -747,5 +751,6 @@ std::optional<UserStruct> CLI::signIn() {
     std::optional<UserStruct> result = authService.signIn(name, email, password);
     if (!result.has_value())
         std::cout << "Qualcosa è andato storto";
+    waitInput();
     return result;
 }

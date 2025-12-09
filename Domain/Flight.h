@@ -35,7 +35,7 @@ public:
     void setArrivalTime(const std::chrono::system_clock::time_point &arrivalTime) { this->arrivalTime = arrivalTime; }
     void setPrice(const float price) { this->price = price; }
     void setTotalSeats(const unsigned int totalSeats) { this->totalSeats = totalSeats; }
-
+    void setBookedSeats(const unsigned int bookedSeat) { this -> bookedSeats = bookedSeat;} //todo Urgent cambiare nome e finire l'implemntazione 
 
     Flight(const unsigned int id, const unsigned int departure_airport_id, const unsigned int arrival_airport_id,
            const std::chrono::system_clock::time_point &departure_time,

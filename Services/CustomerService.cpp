@@ -3,10 +3,20 @@
 //
 
 #include "CustomerService.h"
+//mettere un responseCode
+bool CustomerService::book(const unsigned int userId, const unsigned int flightId, const unsigned int ticketsNumber) const {
+    const Flight* flight = getFlight(flightId);
+    unsigned int freeSeats = flight->getTotalSeats() - flight->getBookedSeats();
+    if(freeSeats<ticketsNumber)
+        return false;
 
-void CustomerService::book(const unsigned int userId, const unsigned int flightId, const unsigned int ticketsNumber) const {
-    for (int i = 0; i<=ticketsNumber; i++)
+    for (int i = 0; i<=ticketsNumber; i++){
         reservationRepo.createReservation(userId,flightId);
+    }
+
+    
+
+    return true;
 }
 
 const Flight * CustomerService::getFlight(const unsigned int flightId) const {
