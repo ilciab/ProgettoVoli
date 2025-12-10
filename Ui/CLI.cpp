@@ -56,6 +56,8 @@ void CLI::customerBookingsMenu(){
         }
     } while (selectedFlightId == -1 or selectedFlight == nullptr);
 
+    int freeSeats = selectedFlight->getTotalSeats() - selectedFlight->getBookedSeats();
+
     do {
         std::cout << "Numero di biglietti da acquistare: ";
         std::string input;
@@ -63,14 +65,19 @@ void CLI::customerBookingsMenu(){
         ticketsNumber = stringToPositiveInteger(input);
         if (ticketsNumber == -1)
             std::cout << "Errore: input non valido\n";
-    }while (ticketsNumber == -1);
+        if(ticketsNumber > freeSeats)
+            std::cout<<"Errore: sono rimasti solo " << freeSeats << "posti\n";
+    }while (ticketsNumber == -1 or ticketsNumber > freeSeats);
 
     std::cout<< "Totale: $"<< adminService.getFlight(selectedFlightId)->getPrice() * ticketsNumber << std::endl;
     std::cout<< "Acquistare? Y/N";
     std::cin >> choice;
     if (choice == "y" or choice == "Y") {
-        customerService.book(userStruct->id.value(),selectedFlightId, ticketsNumber);
-        std::cout<<"Volo aquistato.\n";
+        bool bookResult =  customerService.book(userStruct->id.value(),selectedFlightId, ticketsNumber);
+        if(bookResult==true)
+            std::cout<<"Volo aquistato.\n";
+        else
+            std::cout<<"Errore nell'acquistare il volo\n";
     }
     else
         std::cout<<"Volo non aquistato.\n";
