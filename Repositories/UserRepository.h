@@ -39,6 +39,7 @@ public:
     void setUserEmail(unsigned int userId, const std::string &newEmail);
     void setUserLevel(unsigned int userId, const AdminLevel &newLevel);
     void setUserLevel(unsigned int userId, const CustomerLevel &newLevel);
+    void setUserPassword(unsigned int userId, const std::string &newHahsedPassword);
 };
 
 

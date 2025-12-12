@@ -104,6 +104,8 @@ void CLI::customerMenu() {
             }
 
             case 2: {
+                clearScreen();
+                customerProfileMenu();
                 std::cout << "Non implementato\n";
                 break;
             }
@@ -128,6 +130,46 @@ void CLI::customerMenu() {
                 break;
         }
     }
+}
+
+void CLI::customerProfileMenu() {
+    unsigned int choice = -1;
+    while (choice != 0) {
+        std::string strChoice;
+        std::cout << "----- MENU UTENTE -----\n";
+        std::cout << "1 - Modifica nome";
+        std::cout << "2 - Modifica email";
+        std::cout << "3- Modifica password";
+        std::cout << "0 - Indietro";
+        std::cout << "----------------------\n";
+        std::cin >> strChoice;
+        do {
+            choice = stringToPositiveInteger(strChoice);
+            if (choice == -1)
+                std::cout << "Errore: input non valido\n";
+        }while (choice == -1);
+        switch (choice) {
+            case 1:
+                std::cout << "Inserisci nuovo nome: ";
+                break;
+            case 2:
+                std::cout << "Inserisci nuova email: ";
+                break;
+            case 3:{
+                    std::string oldPassword, newPassword;
+                    std::cout << "Inserisci vecchia password: ";
+                    std::cout << "Inserisci nuova password: ";
+                //todo urgent
+                    break;
+                }
+            case 0:
+                return;
+            default:
+                break;
+        }
+
+    }
+
 }
 
 void CLI::adminMenu() {
@@ -159,6 +201,8 @@ void CLI::adminMenu() {
                 break;
         }
     }
+
+    //todo cambiare tipo choice (un po' dappertutto)
 }
 
 void CLI::printAllUsers(const std::vector<const User *> &users) const {
@@ -166,7 +210,7 @@ void CLI::printAllUsers(const std::vector<const User *> &users) const {
     AdminLevel adminLevel;
     CustomerLevel customerLevel;
     unsigned int level;
-    std::cout << "Lista Utenti:\n";
+    std::cout << "----- LISTA UTENTI -------\n";
 
     for (const User *user: users) {
         userRole = user->getRole();
@@ -188,6 +232,7 @@ void CLI::printAllUsers(const std::vector<const User *> &users) const {
         std::cout << std::endl;
 
         //todo level
+        std::cout << "--------------------------\n";
     }
 
     //fixme fare come printall airports se non c'è nessuno
@@ -197,7 +242,9 @@ void CLI::adminUsersMenu() {
     unsigned int selectedId = 1;
     while (selectedId != 0) {
         std::vector<const User *> users = adminService.getAllUsers();
+        clearScreen();
         printAllUsers(users);
+        waitInput();
         std::cout << "Enter id of user to modify\n";
         std::cout << " 0 - Indietro\n";
         std::cin >> selectedId;

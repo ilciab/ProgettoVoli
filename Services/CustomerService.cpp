@@ -41,6 +41,21 @@ std::vector<const Reservation *> CustomerService::getAllReservations() const {
     return reservationRepo.getAll();
 }
 
+const User *CustomerService::getUser(unsigned int userId) const {
+    return userRepo.getById(userId);
+}
+
+
+bool CustomerService::changeUserPassword(unsigned int userId, const std::string &oldPassword,
+    const std::string &newPassword) const {
+    std::string oldHashedPassword = hashPassword(oldPassword);
+    std::string newHashedPassword = hashPassword(newPassword);
+    const User* user = getUser(userId);
+    if (oldHashedPassword != user->getHashedPassword())
+        return false;
+    userRepo.setUserPassword(userId, newPassword);
+}
+
 void CustomerService::close() const {
     reservationRepo.write();
 }

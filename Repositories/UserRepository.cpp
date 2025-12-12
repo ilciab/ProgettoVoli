@@ -138,6 +138,11 @@ void UserRepository::setUserEmail(unsigned int userId, const std::string &newEma
     getById_internal(userId)->setEmail(newEmail);
 }
 
+void UserRepository::setUserPassword(unsigned int userId, const std::string &newHashedPassword) {
+    User* user = getById_internal(userId);
+    user->setHashedPassword(newHashedPassword);
+}
+
 void UserRepository::remove(const unsigned int id) {
     removeById(users, id);
 }
