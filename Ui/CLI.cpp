@@ -157,9 +157,13 @@ void CLI::customerProfileMenu() {
                 break;
             case 3:{
                     std::string oldPassword, newPassword;
-                    std::cout << "Inserisci vecchia password: ";
+                    std::cout << "Inserisci password attuale: ";
+                    std::cin>>oldPassword;
                     std::cout << "Inserisci nuova password: ";
-                //todo urgent
+                    std::cin>>newPassword;
+                    bool result = customerService.changeUserPassword(userStruct->id.value(), oldPassword,newPassword);
+                    if(result == false)
+                        std::cout<<"Errore: password attuale errata\n";
                     break;
                 }
             case 0:
