@@ -1,0 +1,14 @@
+//
+// Created by ilciab on 12/17/25.
+//
+
+#ifndef PROGETTOVOLI_AUTHRESPONSE_H
+#define PROGETTOVOLI_AUTHRESPONSE_H
+
+#endif //PROGETTOVOLI_AUTHRESPONSE_H
+
+enum class AuthResponse {
+    OK,
+    WRONG_PASSWORD,
+    WRONG_EMAIL
+};

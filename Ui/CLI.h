@@ -13,7 +13,7 @@
 class CLI {
 
     private:
-        std::optional<UserStruct> userStruct;
+        UserStruct userStruct{};
         AuthService& authService;
         AdminService& adminService;
         CustomerService& customerService;
@@ -55,10 +55,10 @@ class CLI {
 
 
 
-        std::optional<UserStruct> signIn();
-        std::optional<UserStruct> login();
+        UserStruct signIn() const;
+        UserStruct login() const;
 
-        std::string iataFormat(std::string iata);
+        static std::string iataFormat(std::string iata);
 
 };
 

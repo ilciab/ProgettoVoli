@@ -3,13 +3,14 @@
 //
 
 #include "CustomerService.h"
+
+#include "AuthService.h"
 //mettere un responseCode
 bool CustomerService::book(const unsigned int userId, const unsigned int flightId, const unsigned int ticketsNumber) const {
     const Flight* flight = getFlight(flightId);
     unsigned int freeSeats = flight->getTotalSeats() - flight->getBookedSeats();
     if(freeSeats<ticketsNumber)
         return false;
-    
     flightRepo.setBookedSeats(flightId, flight->getBookedSeats() + ticketsNumber);    
 
     for (int i = 0; i<=ticketsNumber; i++){
@@ -41,6 +42,16 @@ std::vector<const Reservation *> CustomerService::getAllReservations() const {
     return reservationRepo.getAll();
 }
 
+void CustomerService::changeUserName(unsigned int userId, const std::string &newName) const {
+    userRepo.setUserName(userId, newName);
+}
+
+void CustomerService::changeUserEmail(unsigned int userId, const std::string &newEmail) const {
+    userRepo.setUserEmail(userId, newEmail);
+}
+
+
+
 const User *CustomerService::getUser(unsigned int userId) const {
     return userRepo.getById(userId);
 }
@@ -48,12 +59,13 @@ const User *CustomerService::getUser(unsigned int userId) const {
 
 bool CustomerService::changeUserPassword(unsigned int userId, const std::string &oldPassword,
     const std::string &newPassword) const {
-    std::string oldHashedPassword = hashPassword(oldPassword);
-    std::string newHashedPassword = hashPassword(newPassword);
+    std::string oldHashedPassword = AuthService::hashPassword(oldPassword);
+    std::string newHashedPassword = AuthService::hashPassword(newPassword);
     const User* user = getUser(userId);
     if (oldHashedPassword != user->getHashedPassword())
         return false;
-    userRepo.setUserPassword(userId, newPassword);
+    userRepo.setUserPassword(userId, newHashedPassword);
+    return true;
 }
 
 void CustomerService::close() const {

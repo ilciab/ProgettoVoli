@@ -36,4 +36,5 @@ add_executable(ProgettoVoli main.cpp
         Domain/Reservation.h
         Repositories/ReservationRepository.cpp
         Repositories/ReservationRepository.h
+        Enums/AuthResponse.h
 )

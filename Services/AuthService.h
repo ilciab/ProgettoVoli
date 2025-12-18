@@ -14,9 +14,9 @@ class AuthService {
         UserRepository& repo;
 
     public:
-        std::optional<UserStruct> login(const std::string&, const std::string&);
-        std::optional<UserStruct> signIn(const std::string&, const std::string&, const std::string&);
-        std::string hashPassword(const std::string&);
+        UserStruct login(const std::string&, const std::string&) const;
+        UserStruct signIn(const std::string&, const std::string&, const std::string&) const;
+        static std::string hashPassword(const std::string&);
 
         void close();
 

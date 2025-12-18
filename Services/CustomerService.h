@@ -10,7 +10,6 @@
 #include "../Repositories/FlightRepository.h"
 #include "../Repositories/UserRepository.h"
 #include "../Repositories/ReservationRepository.h"
-
 class CustomerService {
 private:
     FlightRepository &flightRepo;
@@ -32,15 +31,10 @@ public:
     const Airport* getAirport(unsigned int airportId) const;
     const Reservation* getReservation(unsigned int reservationId) const;
     std::vector<const Reservation*> getAllReservations() const;
+    void changeUserName(unsigned int userId, const std::string &newName) const;
+    void changeUserEmail(unsigned int userId, const std::string &newEmail) const;
     bool changeUserPassword(unsigned int userId, const std::string &oldPassword, const std::string &newPassword) const;
     const User* getUser(unsigned int userId) const;
-
-    static std::string hashPassword(const std::string &password) {
-        uint64_t h = 5381;
-        for (unsigned char c: password)
-            h = (h * 33) + c;
-        return std::to_string(h);
-    }
 
     void close() const;
 };

@@ -11,7 +11,7 @@ const User *AdminService::getUser(const unsigned int userId) const { return user
 
 void AdminService::modifyUserName(const unsigned int userId, const std::string &newName) const { userRepo.setUserName(userId, newName);}
 void AdminService::modifyUserEmail(const unsigned int userId, const std::string &newEmail) const { userRepo.setUserEmail(userId, newEmail); }
-void AdminService::modifyUserLevel(const unsigned int userId, const std::string &newLevel) {} //fixme
+void AdminService::modifyUserLevel(const unsigned int userId, const std::string &newLevel) {} //todo
 
 void AdminService::deleteUser(const unsigned int userId) const { userRepo.remove(userId); }
 

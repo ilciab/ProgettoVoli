@@ -6,14 +6,13 @@
 #define PROGETTOVOLI_LOGINRESULT_H
 #include <optional>
 
+#include "../Enums/AuthResponse.h"
 #include "../Enums/UserRole.h"
 
 #endif //PROGETTOVOLI_LOGINRESULT_H
 
 struct UserStruct {
-    std::optional<unsigned int> id;
+    unsigned int id;
     UserRole role;
-    unsigned int responseCode;
+    AuthResponse responseCode;
 };
-
-//todo levare optional e usare reponseCode per vedere se la risposta è valida, aggiustare nome fare magari AuthResponse o cose del genere.

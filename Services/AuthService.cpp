@@ -8,31 +8,37 @@
 
 
 
-std::optional<UserStruct> AuthService::login(const std::string &email, const std::string &password) {
+UserStruct AuthService::login(const std::string &email, const std::string &password) const {
     UserStruct loginResult;
     const User *user = repo.getByEmail(email);
     const std::string hashedPassword = hashPassword(password);
 
     if (user == nullptr) {
-        return std::nullopt;
+        loginResult.responseCode = AuthResponse::WRONG_EMAIL;
+        return loginResult;
     }
-    if (user->getHashedPassword() != hashedPassword)
-        return std::nullopt;
+    if (user->getHashedPassword() != hashedPassword) {
+        loginResult.responseCode = AuthResponse::WRONG_PASSWORD;
+        return loginResult;
+    }
 
     loginResult.id = user->getId();
     loginResult.role = user->getRole();
-
+    loginResult.responseCode = AuthResponse::OK;
     return loginResult;
-    //todo differenziare MailNotFound da WrongPassword
 }
 
-std::optional<UserStruct> AuthService::signIn(const std::string &name, const std::string &email, const std::string &password) {
+UserStruct AuthService::signIn(const std::string &name, const std::string &email, const std::string &password) const {
     UserStruct loginResult;
-    if (repo.getByEmail(email) != nullptr) //esiste già un utente con quella mail
-        return std::nullopt;
+
+    //esiste già un utente con quella mail
+    if (repo.getByEmail(email) != nullptr) {
+        loginResult.responseCode = AuthResponse::WRONG_EMAIL;
+        return loginResult;
+    }
     loginResult.id = repo.createCustomer(name, email, hashPassword(password), CustomerLevel::BRONZE);
     loginResult.role = UserRole::Customer;
-
+    loginResult.responseCode = AuthResponse::OK;
     return loginResult;
 }
 
