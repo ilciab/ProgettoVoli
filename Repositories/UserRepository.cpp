@@ -4,12 +4,23 @@
 
 #include "UserRepository.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "../Domain/Admin.h"
+#include "../Services/AuthService.h"
 #include "../Utils/RepositoryUtils.h"
+
+
+void UserRepository::createDefaultAdmin(const unsigned int largestId) {
+    std::string defaultAdminName = "Admin";
+    std::string defaultAdminEmail = "admin";
+    std::string defaultAdminPassword = "admin";
+    std::string hashedPassword = AuthService::hashPassword(defaultAdminPassword);
+    users.emplace_back(std::make_unique<Admin>(largestId+1, defaultAdminName, defaultAdminEmail, hashedPassword));
+}
 
 
 void UserRepository::load() {
@@ -18,40 +29,55 @@ void UserRepository::load() {
 
     unsigned int largestId = 0;
     std::string line;
-    std::string idStr, name, email, hashedPassword, customerLevelString;
-    CustomerLevel customerLevel;
-    AdminLevel adminLevel;
+    std::string idStr, name, email, hashedPassword;
     while (std::getline(customerIn, line)) {
         std::stringstream ss(line);
         std::getline(ss, idStr, ';');
         std::getline(ss, name, ';');
         std::getline(ss, email, ';');
         std::getline(ss, hashedPassword, ';');
-        std::getline(ss, customerLevelString, ';');
-        //todo fix se non c'è un id
-        unsigned int id = std::stoul(idStr);
-        customerLevel = static_cast<CustomerLevel>(std::stoi(customerLevelString));
-        users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword,customerLevel));
+        unsigned int id;
+
+        try {
+            id = std::stoul(idStr);
+        } catch (std::exception&) {
+            continue;
+        }
+        users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword));
         largestId = std::max(largestId, id);
     }
-    while (std::getline(adminIn, line)) {
+
+
+    bool adminLoaded = false;
+    if (std::getline(adminIn, line) && !line.empty()) {
         std::stringstream ss(line);
         std::getline(ss, idStr, ';');
         std::getline(ss, name, ';');
         std::getline(ss, email, ';');
         std::getline(ss, hashedPassword, ';');
-        std::getline(ss, customerLevelString, ';');
-        //todo fix se non c'è un id
-        unsigned int id = std::stoul(idStr);
-        adminLevel = static_cast<AdminLevel>(std::stoi(customerLevelString));
-        users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword,adminLevel));
-        largestId = std::max(largestId, id);
+
+        if (!idStr.empty() && !name.empty() && !email.empty() && !hashedPassword.empty()) {
+            try {
+                unsigned int id = std::stoul(idStr);
+                users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword));
+                largestId = std::max(largestId, id);
+                adminLoaded = true;
+            } catch (...) {}
+        }
     }
-    idGen.setStartingId(largestId);
+
     customerIn.close();
     adminIn.close();
-}
 
+    if (!adminLoaded) {
+        std::filesystem::remove(adminPath);
+        createDefaultAdmin(largestId);
+        largestId++;
+    }
+
+    idGen.setStartingId(largestId);
+
+}
 
 void UserRepository::write() {
     std::fstream customerOut = openFile(customerPath,std::ios::out);
@@ -69,7 +95,6 @@ void UserRepository::write() {
                 << user -> getName() << ';'
                 << user -> getEmail() << ';'
                 << user -> getHashedPassword() << ';'
-                << static_cast<int>(std::get<CustomerLevel>(user -> getLevel()))<< ';'
                 << '\n';
         }
         else if (user -> getRole() == UserRole::Admin) {
@@ -77,7 +102,6 @@ void UserRepository::write() {
                 << user -> getName() << ';'
                 << user -> getEmail() << ';'
                 << user -> getHashedPassword() << ';'
-                << static_cast<int>(std::get<AdminLevel>(user -> getLevel()))<< ';'
                 << '\n';
         }
     }
@@ -93,15 +117,16 @@ const User* UserRepository::getByEmail(const std::string& email) const {
     return nullptr;
 }
 
-unsigned int UserRepository::createCustomer(const std::string & name, const std::string & email, const std::string & hashedPassword, const CustomerLevel& customerLevel) {
+unsigned int UserRepository::createCustomer(const std::string & name, const std::string & email, const std::string & hashedPassword) {
     unsigned int id = idGen.getNextId();
-    users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword, customerLevel));
+    users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword));
     return id;
 }
 
-unsigned int UserRepository::createAdmin(const std::string & name, const std::string & email, const std::string & hashedPassword, const AdminLevel& adminLevel) {
+unsigned int UserRepository::createAdmin(const std::string & name, const std::string & email, const std::string & hashedPassword) {
     unsigned int id = idGen.getNextId();
-    users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword, adminLevel));
+    Admin admin(id, name, email, hashedPassword);
+    users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword));
     return id;
 }
 

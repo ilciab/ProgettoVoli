@@ -22,6 +22,8 @@ explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, 
         flightRepo(flightRepo) {}
 
 
+    //void modifyUserPassword(unsigned int userId) const;
+
     std::vector<const User *> getAllUsers() const;
     const User* getUser(unsigned int userId) const;
     void modifyUserName(unsigned int userId, const std::string & newName) const;

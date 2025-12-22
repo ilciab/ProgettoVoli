@@ -36,7 +36,8 @@ UserStruct AuthService::signIn(const std::string &name, const std::string &email
         loginResult.responseCode = AuthResponse::WRONG_EMAIL;
         return loginResult;
     }
-    loginResult.id = repo.createCustomer(name, email, hashPassword(password), CustomerLevel::BRONZE);
+
+    loginResult.id = repo.createCustomer(name, email, hashPassword(password));
     loginResult.role = UserRole::Customer;
     loginResult.responseCode = AuthResponse::OK;
     return loginResult;

@@ -220,31 +220,15 @@ void CLI::adminMenu() {
 
 void CLI::printAllUsers(const std::vector<const User *> &users) const {
     UserRole userRole;
-    AdminLevel adminLevel;
-    CustomerLevel customerLevel;
-    unsigned int level;
     std::cout << "----- LISTA UTENTI -------\n";
 
     for (const User *user: users) {
-        userRole = user->getRole();
-        switch (userRole) {
-            case UserRole::Admin:
-                adminLevel = std::get<AdminLevel>(user->getLevel());
-                level = static_cast<int>(adminLevel);
-                break;
-            case UserRole::Customer:
-                customerLevel = std::get<CustomerLevel>(user->getLevel());
-                level = static_cast<int>(customerLevel);
-                break;
-        }
+        userRole = user->getRole(); //todo aggiustare per l'admin (ce ne è solo uno) (ne rimarrà solo uno!)
         std::cout << "ID: " << user->getId() << "\t";
         std::cout << "Email: " << user->getEmail() << "\t";
         std::cout << "Nome: " << user->getName() << "\t";
-        std::cout << "Livello: " << level << "\t";
         std::cout << "Ruolo: " << static_cast<int>(userRole) << "\t";
         std::cout << std::endl;
-
-        //todo level
         std::cout << "--------------------------\n";
     }
 
@@ -276,8 +260,7 @@ void CLI::adminUsersMenu() {
             std::cout << std::endl;
             std::cout << "1 - Modifica Nome\n";
             std::cout << "2 - Modifica Email\n";
-            std::cout << "3 - Modifica Livello\n";
-            std::cout << "4 - Elimina\n";
+            std::cout << "3 - Elimina\n";
             std::cout << "0 - Indietro";
 
             std::cin >> choice;
@@ -297,12 +280,6 @@ void CLI::adminUsersMenu() {
                     adminService.modifyUserEmail(user->getId(), newAttribute);
                     break;
                 case 3:
-                    std::cout << "Da implementare";
-                    //std::cout<<"Inserisci nuovo livello: ";
-                    //std::cin >> newAttribute;
-                    //adminService.modifyLevel(user-> getId(), newAttribute);
-                    break;
-                case 4:
                     std::cout << "Utente eliminato\n";
                     adminService.deleteUser(user->getId());
                 case 0:

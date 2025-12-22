@@ -6,7 +6,6 @@
 #include <iomanip>
 
 
-
 std::fstream openFile(const std::string& path, const std::ios::openmode& mode) {
     std::fstream file(path, mode);
     if (!file) {
@@ -47,10 +46,8 @@ std::string timePointToString(const std::chrono::system_clock::time_point &tp) {
 int stringToPositiveInteger(const std::string &string) {
     try {
         int result = std::stoi(string);
-
         if (result < 0)
             return -1;
-
         return result;
     } catch (...) { return -1; }
 }

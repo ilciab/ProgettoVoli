@@ -24,12 +24,13 @@ public:
         UserRepository::load();
     }
 
+    void createDefaultAdmin(const unsigned int largestId);
     void load() override;
     void write() override;
     void remove(unsigned int id) override;
 
-    unsigned int createCustomer(const std::string &name, const std::string &email, const std::string &hashedPassword, const CustomerLevel &customerLevel);
-    unsigned int createAdmin(const std::string &name, const std::string &email, const std::string &hashedPassword,const AdminLevel &adminLevel);
+    unsigned int createCustomer(const std::string &name, const std::string &email, const std::string &hashedPassword);
+    unsigned int createAdmin(const std::string &name, const std::string &email, const std::string &hashedPassword);
 
     const User *getByEmail(const std::string &email) const;
     const User *getById(unsigned int id) const override;
@@ -37,8 +38,6 @@ public:
 
     void setUserName(unsigned int userId, const std::string &newName);
     void setUserEmail(unsigned int userId, const std::string &newEmail);
-    void setUserLevel(unsigned int userId, const AdminLevel &newLevel);
-    void setUserLevel(unsigned int userId, const CustomerLevel &newLevel);
     void setUserPassword(unsigned int userId, const std::string &newHahsedPassword);
 };
 
