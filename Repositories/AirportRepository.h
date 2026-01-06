@@ -27,7 +27,7 @@ public:
 
     const Airport* getById(unsigned int id) const override;
     Airport *getById_internal(unsigned int id) override;
-    const Airport* getByIata(std::string iata) const;
+    const Airport* getByIata(const std::string& iata) const;
     std::vector<const Airport *> getAll() override;
 
     unsigned int createAirport(const std::string &iata, const std::string &nation, const std::string &city, const std::string &name);
@@ -36,6 +36,8 @@ public:
     void setAirportNation(unsigned int airportId, const std::string &newNation);
     void setAirportName(unsigned int airportId, const std::string &newName);
     void setAirportCity(unsigned int airportId, const std::string &newCity);
+    void increaseUsages(unsigned int airportId);
+    void decreaseUsages(unsigned int airportId);
 
 
 };

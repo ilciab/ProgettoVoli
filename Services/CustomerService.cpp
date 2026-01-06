@@ -13,12 +13,9 @@ bool CustomerService::book(const unsigned int userId, const unsigned int flightI
         return false;
     flightRepo.setBookedSeats(flightId, flight->getBookedSeats() + ticketsNumber);    
 
-    for (int i = 0; i<=ticketsNumber; i++){
+    for (int i = 0; i<ticketsNumber; i++){
         reservationRepo.createReservation(userId,flightId);
     }
-
-    
-
     return true;
 }
 
@@ -34,7 +31,7 @@ const Reservation * CustomerService::getReservation(const unsigned int reservati
     return reservationRepo.getById(reservationId);
 }
 
-std::vector<const Flight *> CustomerService::getAllFlights() {
+std::vector<const Flight *> CustomerService::getAllFlights() const {
     return flightRepo.getAll();
 }
 
@@ -50,23 +47,10 @@ void CustomerService::changeUserEmail(unsigned int userId, const std::string &ne
     userRepo.setUserEmail(userId, newEmail);
 }
 
-
-
 const User *CustomerService::getUser(unsigned int userId) const {
     return userRepo.getById(userId);
 }
 
-
-bool CustomerService::changeUserPassword(unsigned int userId, const std::string &oldPassword,
-    const std::string &newPassword) const {
-    std::string oldHashedPassword = AuthService::hashPassword(oldPassword);
-    std::string newHashedPassword = AuthService::hashPassword(newPassword);
-    const User* user = getUser(userId);
-    if (oldHashedPassword != user->getHashedPassword())
-        return false;
-    userRepo.setUserPassword(userId, newHashedPassword);
-    return true;
-}
 
 void CustomerService::close() const {
     reservationRepo.write();

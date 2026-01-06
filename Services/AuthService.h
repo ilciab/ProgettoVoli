@@ -17,8 +17,8 @@ class AuthService {
         UserStruct login(const std::string&, const std::string&) const;
         UserStruct signIn(const std::string&, const std::string&, const std::string&) const;
         static std::string hashPassword(const std::string&);
-
-        void close();
+        bool changeUserPassword(unsigned int userId, const std::string &oldPassword, const std::string &newPassword) const;
+        void close() const;
 
         explicit AuthService(UserRepository &repo) : repo(repo) {}
 };

@@ -19,21 +19,20 @@ private:
 
 public:
     explicit CustomerService(AirportRepository &airportRepo, FlightRepository &flightRepo, ReservationRepository &reservationRepo, UserRepository &userRepo) :
-    airportRepo(airportRepo),
     flightRepo(flightRepo),
     reservationRepo(reservationRepo),
+    airportRepo(airportRepo),
     userRepo(userRepo){};
 
     bool book(unsigned int userId, unsigned int flightId, unsigned int ticketsNumber) const;
 
-    std::vector<const Flight *> getAllFlights();
+    std::vector<const Flight *> getAllFlights() const;
     const Flight* getFlight(unsigned int flightId) const;
     const Airport* getAirport(unsigned int airportId) const;
     const Reservation* getReservation(unsigned int reservationId) const;
     std::vector<const Reservation*> getAllReservations() const;
     void changeUserName(unsigned int userId, const std::string &newName) const;
     void changeUserEmail(unsigned int userId, const std::string &newEmail) const;
-    bool changeUserPassword(unsigned int userId, const std::string &oldPassword, const std::string &newPassword) const;
     const User* getUser(unsigned int userId) const;
 
     void close() const;

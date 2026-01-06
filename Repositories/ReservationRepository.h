@@ -8,6 +8,7 @@
 
 #include "RepositoryInterface.h"
 #include "../Domain/Reservation.h"
+#include "../Utils/IdGenerator.h"
 
 
 class ReservationRepository : public RepositoryInterface<Reservation>{

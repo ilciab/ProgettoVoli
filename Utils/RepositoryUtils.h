@@ -30,6 +30,7 @@ std::string readBinaryString(std::fstream &file);
 std::string timePointToString(const std::chrono::system_clock::time_point &tp);
 
 int stringToPositiveInteger(const std::string &string);
+float stringToFloat(const std::string &string);
 
 std::optional<std::chrono::system_clock::time_point> stringToTimePoint(const std::string &str);
 

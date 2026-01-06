@@ -85,7 +85,7 @@ void UserRepository::write() {
 
     if (!customerOut.is_open()) {
         std::cerr << "Errore nell'apertura file clienti\n";
-        return; //todo O gestisci errore diversamente
+        return;
     }
 
     for (const auto& user : users) {

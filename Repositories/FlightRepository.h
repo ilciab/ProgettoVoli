@@ -19,7 +19,7 @@ class FlightRepository : public RepositoryInterface<Flight> {
 public:
     explicit FlightRepository(const std::string &path)
         : path(path) {
-        load();
+        FlightRepository::load();
     }
 
     const Flight *getById(unsigned int id) const override;

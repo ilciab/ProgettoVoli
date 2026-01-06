@@ -9,7 +9,7 @@
 
 
 UserStruct AuthService::login(const std::string &email, const std::string &password) const {
-    UserStruct loginResult;
+    UserStruct loginResult{};
     const User *user = repo.getByEmail(email);
     const std::string hashedPassword = hashPassword(password);
 
@@ -29,7 +29,7 @@ UserStruct AuthService::login(const std::string &email, const std::string &passw
 }
 
 UserStruct AuthService::signIn(const std::string &name, const std::string &email, const std::string &password) const {
-    UserStruct loginResult;
+    UserStruct loginResult{};
 
     //esiste già un utente con quella mail
     if (repo.getByEmail(email) != nullptr) {
@@ -51,6 +51,17 @@ std::string AuthService::hashPassword(const std::string &password) {
     return std::to_string(h);
 }
 
-void AuthService::close() {
+bool AuthService::changeUserPassword(unsigned int userId, const std::string &oldPassword,
+    const std::string &newPassword) const {
+    std::string oldHashedPassword = hashPassword(oldPassword);
+    std::string newHashedPassword = hashPassword(newPassword);
+    const User* user = repo.getById(userId);
+    if (oldHashedPassword != user->getHashedPassword())
+        return false;
+    repo.setUserPassword(userId, newHashedPassword);
+    return true;
+}
+
+void AuthService::close() const {
     repo.write();
 }

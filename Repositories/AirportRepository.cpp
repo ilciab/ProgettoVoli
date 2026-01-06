@@ -6,7 +6,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <ranges>
 
 #include "../Utils/RepositoryUtils.h"
 
@@ -14,8 +13,6 @@
 void AirportRepository::remove(const unsigned int id) {
     removeById(airports, id);
 }
-
-
 
 
 void AirportRepository::write() {
@@ -61,7 +58,7 @@ std::vector<const Airport *> AirportRepository::getAll() {
 }
 
 unsigned int AirportRepository::createAirport(const std::string &iata, const std::string &nation,
-    const std::string &city, const std::string &name) {
+                                              const std::string &city, const std::string &name) {
     unsigned int id = idGen.getNextId();
     airports.emplace_back(std::make_unique<Airport>(id, iata, nation, city, name));
     return id;
@@ -83,7 +80,7 @@ Airport *AirportRepository::getById_internal(const unsigned int id) {
     return nullptr;
 }
 
-const Airport * AirportRepository::getByIata(std::string iata) const {
+const Airport *AirportRepository::getByIata(const std::string& iata) const {
     for (const auto &airport: airports) {
         if (airport->getIata() == iata)
             return airport.get();
@@ -106,4 +103,20 @@ void AirportRepository::setAirportName(unsigned int airportId, const std::string
 
 void AirportRepository::setAirportCity(unsigned int airportId, const std::string &newCity) {
     getById_internal(airportId)->setCity(newCity);
+}
+
+void AirportRepository::increaseUsages(unsigned int airportId) {
+    Airport *airport = getById_internal(airportId);
+    if (airport == nullptr)
+        return;
+    airport->setUsages(airport->getUsages() + 1);
+}
+
+void AirportRepository::decreaseUsages(unsigned int airportId) {
+    Airport *airport = getById_internal(airportId);
+    if (airport == nullptr)
+        return;
+    if (airport->getUsages() == 0)
+        return;
+    airport->setUsages(airport->getUsages() - 1);
 }

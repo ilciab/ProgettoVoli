@@ -24,7 +24,7 @@ public:
         UserRepository::load();
     }
 
-    void createDefaultAdmin(const unsigned int largestId);
+    void createDefaultAdmin(unsigned int largestId);
     void load() override;
     void write() override;
     void remove(unsigned int id) override;

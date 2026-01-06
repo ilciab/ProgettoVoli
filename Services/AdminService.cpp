@@ -11,7 +11,6 @@ const User *AdminService::getUser(const unsigned int userId) const { return user
 
 void AdminService::modifyUserName(const unsigned int userId, const std::string &newName) const { userRepo.setUserName(userId, newName);}
 void AdminService::modifyUserEmail(const unsigned int userId, const std::string &newEmail) const { userRepo.setUserEmail(userId, newEmail); }
-void AdminService::modifyUserLevel(const unsigned int userId, const std::string &newLevel) {} //todo
 
 void AdminService::deleteUser(const unsigned int userId) const { userRepo.remove(userId); }
 
@@ -33,37 +32,35 @@ void AdminService::modifyAirportIATA(const unsigned int airportId, const std::st
 void AdminService::deleteAirport(const unsigned int airportId) const { airportRepo.remove(airportId); }
 
 bool AdminService::createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
-                                const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats) {
-    
+                                const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats) const {
+
     if(arrivalTime<=departureTime){
-        std::cout<<"Tempo sbagliato\n";
+        std::cerr<<"Orario arrivo minore partenza\n";
         return false;
     }
-    
+
     if(departureAirportId == arrivalAirportId){
-        std::cout<<"Id uguale\n";
+        std::cerr<<"Id partenza e arrivo uguale\n";
         return false;
     }
 
     if(airportRepo.getById(departureAirportId) == nullptr or airportRepo.getById(arrivalAirportId) == nullptr){
-        std::cout<<"Id inesistente\n";
+        std::cerr<<"Id inesistente\n";
         return false;
     }
 
     flightRepo.createFlight(departureAirportId, arrivalAirportId, departureTime, arrivalTime, price, totalSeats);
-
+    airportRepo.increaseUsages(departureAirportId);
+    airportRepo.increaseUsages(arrivalAirportId);
     return true;
 }
 
 
-std::vector<const Flight *> AdminService::getAllFlights() { return flightRepo.getAll(); }
-const Flight * AdminService::getFlight(const unsigned int flightId) { return flightRepo.getById(flightId); }
+std::vector<const Flight *> AdminService::getAllFlights() const { return flightRepo.getAll(); }
+const Flight * AdminService::getFlight(const unsigned int flightId) const { return flightRepo.getById(flightId); }
 
 bool AdminService::modifyFlightDepartureAirportId(const unsigned int flightId, const unsigned int newDepartureAirportId) const {
     if (airportRepo.getById(newDepartureAirportId) == nullptr)
-        return false;
-    const Flight *selectedFlight = flightRepo.getById(flightId);
-    if (newDepartureAirportId == selectedFlight->getArrivalAirportId())
         return false;
     flightRepo.setFlightDepartureAirport(flightId, newDepartureAirportId);
     return true;
@@ -72,22 +69,26 @@ bool AdminService::modifyFlightDepartureAirportId(const unsigned int flightId, c
 bool AdminService::modifyFlightArrivalAirportId(const unsigned int flightId, const unsigned int newArrivalAirportId) const {
     if (airportRepo.getById(newArrivalAirportId) == nullptr)
         return false;
-    const Flight *selectedFlight = flightRepo.getById(flightId);
-    if (newArrivalAirportId == selectedFlight->getDepartureAirportId())
-        return false;
-    flightRepo.setFlightDepartureAirport(flightId, newArrivalAirportId);
+    flightRepo.setFlightArrivalAirport(flightId, newArrivalAirportId);
     return true;
 }
 
-bool AdminService::modifyFlightDepartureTime(unsigned int flightId, std::string newDepartureTime) const {
-    //flightRepo.setFlightDepartureTime(flightId, newDepartureTime); //fixme
+void AdminService::modifyFlightDepartureTime(const unsigned int flightId, const std::chrono::system_clock::time_point &newDepartureTime) const {
+    flightRepo.setFlightDepartureTime(flightId, newDepartureTime);
 }
 
-bool AdminService::modifyFlightArrivalTime(unsigned int flightId, std::string newArrivalTime) const {
-    //flightRepo.setFlightArrivalTime(flightId, newArrivalTime); //fixme
+void AdminService::modifyFlightArrivalTime(const unsigned int flightId, const std::chrono::system_clock::time_point &newArrivalTime) const {
+    flightRepo.setFlightArrivalTime(flightId, newArrivalTime);
 }
 
 void AdminService::modifyFlightPrice(const unsigned int flightId, const float newPrice) const { flightRepo.setFlightPrice(flightId, newPrice); }
 void AdminService::modifyFlightTotalSeats(const unsigned int flightId, const unsigned int newTotalSeats) const { flightRepo.setFlightTotalSeats(flightId, newTotalSeats); }
-void AdminService::deleteFlight(const unsigned int flightId) const { flightRepo.remove(flightId); }
+void AdminService::deleteFlight(const unsigned int flightId) const {
+    const Flight *flight = flightRepo.getById(flightId);
+    unsigned int departureAirportId = flight->getDepartureAirportId();
+    unsigned int arrivalAirportId = flight->getArrivalAirportId();
+    airportRepo.decreaseUsages(departureAirportId);
+    airportRepo.decreaseUsages(arrivalAirportId);
+    flightRepo.remove(flightId);
 
+}

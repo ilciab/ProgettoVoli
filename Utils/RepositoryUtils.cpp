@@ -41,7 +41,7 @@ std::string timePointToString(const std::chrono::system_clock::time_point &tp) {
     std::stringstream ss;
     ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M");
     return ss.str();
-};
+}
 
 int stringToPositiveInteger(const std::string &string) {
     try {
@@ -50,6 +50,15 @@ int stringToPositiveInteger(const std::string &string) {
             return -1;
         return result;
     } catch (...) { return -1; }
+}
+
+float stringToFloat(const std::string& string) {
+    float result;;
+    if (std::from_chars(string.data(), string.data() + string.size(), result).ec != std::errc())
+        return -1.0f;
+    if (result < 0.0f)
+        return -1.0f;
+    return result;
 }
 
 

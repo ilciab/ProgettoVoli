@@ -10,7 +10,7 @@
 #include "../Utils/RepositoryUtils.h"
 
 
-std::string CLI::timepointToString(std::chrono::system_clock::time_point tp) const {
+std::string CLI::timepointToString(std::chrono::system_clock::time_point tp) {
     std::string timeDateStr = std::format("{:%Y-%m-%d %H:%M}", tp);
     return timeDateStr;
 }
@@ -18,6 +18,7 @@ std::string CLI::timepointToString(std::chrono::system_clock::time_point tp) con
 void CLI::clearScreen() const {
     std::cout << "\033[2J\033[1;1H\033[3J" << std::flush;
 }
+
 
 void CLI::waitInput() const {
     std::cout << "Premi invio per continuare\n";
@@ -68,7 +69,7 @@ void CLI::customerBookingsMenu() {
     } while (ticketsNumber == -1 or ticketsNumber > freeSeats);
 
     std::cout << "Totale: $" << adminService.getFlight(selectedFlightId)->getPrice() * ticketsNumber << std::endl;
-    std::cout << "Acquistare? Y/N";
+    std::cout << "Aquistare? Y/N ";
     std::cin >> choice;
     if (choice == "y" or choice == "Y") {
         bool bookResult = customerService.book(userStruct.id, selectedFlightId, ticketsNumber);
@@ -103,13 +104,13 @@ void CLI::customerMenu() {
             }
 
             case 2: {
-                customerProfileMenu();
+                userProfileMenu();
                 break;
             }
 
             case 3: {
                 std::vector<const Reservation *> reservations = customerService.getAllReservations();
-                if (reservations.size() == 0) {
+                if (reservations.empty()) {
                     std::cout << "Errore: non sono prenotazioni a tuo nome\n";
                     waitInput();
                     break;
@@ -129,11 +130,15 @@ void CLI::customerMenu() {
     }
 }
 
-void CLI::customerProfileMenu() {
-    clearScreen();
+void CLI::userProfileMenu() const {
     while (true) {
+        clearScreen();
         std::string strChoice;
-        std::cout << "----- MENU UTENTE -----\n";
+
+        std::cout << "Nome: " << adminService.getUser(userStruct.id)->getName()<< "\t";
+        std::cout << "Email:" << adminService.getUser(userStruct.id)->getEmail()<<"\n\n";
+
+        std::cout << "------ PROFILO -------\n";
         std::cout << "1 - Modifica nome\n";
         std::cout << "2 - Modifica email\n";
         std::cout << "3 - Modifica password\n";
@@ -144,13 +149,19 @@ void CLI::customerProfileMenu() {
         if (choice == -1)
             continue;
 
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
         switch (choice) {
             case 1: {
                 std::string newName;
                 std::cout << "Inserisci nuovo nome: ";
-                std::cin >> newName;
-                customerService.changeUserName(userStruct.id, newName);
-                std::cout << "Nome modificato correttamente\n";
+                std::getline(std::cin, newName);
+                if (!newName.empty()) {
+                    customerService.changeUserName(userStruct.id, newName);
+                    std::cout << "Nome modificato correttamente\n";
+                } else {
+                    std::cout << "Il nome non può essere vuoto.\n";
+                }
                 waitInput();
                 break;
             }
@@ -158,7 +169,7 @@ void CLI::customerProfileMenu() {
                 std::string newEmail;
                 std::cout << "Inserisci nuova email: ";
                 std::cin >> newEmail;
-                customerService.changeUserName(userStruct.id, newEmail);
+                customerService.changeUserEmail(userStruct.id, newEmail);
                 std::cout << "Email modificata correttamente\n";
                 waitInput();
                 break;
@@ -169,7 +180,7 @@ void CLI::customerProfileMenu() {
                 std::cin >> oldPassword;
                 std::cout << "Inserisci nuova password: ";
                 std::cin >> newPassword;
-                bool result = customerService.changeUserPassword(userStruct.id, oldPassword, newPassword);
+                bool result = authService.changeUserPassword(userStruct.id, oldPassword, newPassword);
                 if (result)
                     std::cout << "Password cambiata correttamente\n";
                 else
@@ -186,17 +197,24 @@ void CLI::customerProfileMenu() {
 }
 
 void CLI::adminMenu() {
-    unsigned int choice = 1;
-    while (choice != 0) {
+    bool running = true;
+    while (running) {
         clearScreen();
         std::cout << "----- MENU ADMIN -----\n";
-        std::cout << " 1 - Modify and view Users\n";
-        std::cout << " 2 - Modify and view Airports\n";
-        std::cout << " 3 - Modify and view Flights\n";
-        std::cout << " 4 - Modify and view Bookings\n";
+        std::cout << " 1 - Modifica utenti\n";
+        std::cout << " 2 - Modifica aeroporti\n";
+        std::cout << " 3 - Modifica voli\n";
+        std::cout << " 4 - Modifica admin\n";
         std::cout << " 0 - Logout\n";
         std::cout << "----------------------\n";
-        std::cin >> choice;
+
+        std::string choiceStr;
+        int choice;
+        std::cin >> choiceStr;
+        choice = stringToPositiveInteger(choiceStr);
+        if (choice == -1)
+            continue;
+
         switch (choice) {
             case 1:
                 adminUsersMenu();
@@ -206,90 +224,110 @@ void CLI::adminMenu() {
                 break;
             case 3:
                 adminFlightsMenu();
+                break;
+            case 4:
+                userProfileMenu();
+                break;
             case 0:
                 userStruct = {};
-                return;
+                running = false;
+                break;
             default:
                 std::cout << "Opzione non valida";
                 break;
         }
     }
-
-    //todo cambiare tipo choice (un po' dappertutto)
 }
 
-void CLI::printAllUsers(const std::vector<const User *> &users) const {
+void CLI::printAllCustomers(const std::vector<const User *> &users) const {
     UserRole userRole;
     std::cout << "----- LISTA UTENTI -------\n";
 
     for (const User *user: users) {
-        userRole = user->getRole(); //todo aggiustare per l'admin (ce ne è solo uno) (ne rimarrà solo uno!)
+        userRole = user->getRole();
+        if (userRole != UserRole::Customer)
+            continue;
         std::cout << "ID: " << user->getId() << "\t";
         std::cout << "Email: " << user->getEmail() << "\t";
         std::cout << "Nome: " << user->getName() << "\t";
-        std::cout << "Ruolo: " << static_cast<int>(userRole) << "\t";
         std::cout << std::endl;
         std::cout << "--------------------------\n";
     }
+}
 
-    //todo fixme fare come printall airports se non c'è nessuno
+void CLI::manageSingleUser(unsigned int id) {
+    bool running = true;
+    while (running) {
+        clearScreen();
+        const User *user = adminService.getUser(id);
+        std::string strChoice;
+        std::cout << "Utente Selezionato:\n";
+        std::cout << "ID:" << user->getId() << "\t";
+        std::cout << "Email:" << user->getEmail() << "\t";
+        std::cout << "Name:" << user->getName() << "\t";
+        std::cout << std::endl;
+        std::cout << "1 - Modifica Nome\n";
+        std::cout << "2 - Modifica Email\n";
+        std::cout << "3 - Elimina\n";
+        std::cout << "0 - Indietro\n";
+
+        std::cin >> strChoice;
+        int choice = stringToPositiveInteger(strChoice);
+        if (choice == -1)
+            continue;
+        std::string newAttribute;
+        switch (choice) {
+            case 1:
+                std::cout << "Inserisci nuovo nome: ";
+                std::getline(std::cin, newAttribute);
+                std::cout << std::endl;
+                adminService.modifyUserName(user->getId(), newAttribute);
+                break;
+            case 2:
+                std::cout << "Inserisci nuova email: ";
+                std::cin >> newAttribute;
+                std::cout << std::endl;
+                adminService.modifyUserEmail(user->getId(), newAttribute);
+                break;
+            case 3:
+                std::cout << "Utente eliminato\n";
+                adminService.deleteUser(user->getId());
+            case 0:
+                running = false;
+                break;
+            default:
+                std::cout << "Opzione non valida\n";
+                break;
+        }
+    }
 }
 
 void CLI::adminUsersMenu() {
-    unsigned int selectedId = 1;
-    while (selectedId != 0) {
-        std::vector<const User *> users = adminService.getAllUsers();
+    while (true) {
         clearScreen();
-        printAllUsers(users);
+        std::vector<const User *> users = adminService.getAllUsers();
+        if (users.size() - 1 == 0) {
+            std::cout << "Errore: non sono presenti utenti nel database, torna più tardi\n";
+            waitInput();
+            return;
+        }
+        printAllCustomers(users);
         std::cout << "Inserisci l'id dell'utente da modificare\n";
         std::cout << " 0 - Indietro\n";
-        std::cin >> selectedId;
-        const User *user = adminService.getUser(selectedId);
+        std::string selectedIdStr;
+        int selectedId;
+        std::cin >> selectedIdStr;
+        selectedId = stringToPositiveInteger(selectedIdStr);
 
-        if (user == nullptr) {
-            std::cout << "L'utente con id: " << selectedId << " non esiste\n";
+        if (selectedId == 0)
+            return;
+        if (selectedId == -1)
             continue;
-        }
-        bool running = true;
-        while (running) {
-            int choice;
-            std::cout << "Utente Selezionato:\n";
-            std::cout << "ID:" << user->getId() << "\t";
-            std::cout << "Email:" << user->getEmail() << "\t";
-            std::cout << "Name:" << user->getName() << "\t";
-            std::cout << std::endl;
-            std::cout << "1 - Modifica Nome\n";
-            std::cout << "2 - Modifica Email\n";
-            std::cout << "3 - Elimina\n";
-            std::cout << "0 - Indietro";
-
-            std::cin >> choice;
-
-            std::string newAttribute;
-            switch (choice) {
-                case 1:
-                    std::cout << "Inserisci nuovo nome: ";
-                    std::cin >> newAttribute;
-                    std::cout << std::endl;
-                    adminService.modifyUserName(user->getId(), newAttribute);
-                    break;
-                case 2:
-                    std::cout << "Inserisci nuova email: ";
-                    std::cin >> newAttribute;
-                    std::cout << std::endl;
-                    adminService.modifyUserEmail(user->getId(), newAttribute);
-                    break;
-                case 3:
-                    std::cout << "Utente eliminato\n";
-                    adminService.deleteUser(user->getId());
-                case 0:
-                    running = false;
-                    break;
-                default:
-                    std::cout << "Opzione non valida\n";
-                    break;
-            } //todo come adminmenu
-        }
+        if (adminService.getUser(selectedId) == nullptr)
+            continue;
+        if (adminService.getUser(selectedId)->getRole() == UserRole::Admin)
+            continue;
+        manageSingleUser(selectedId);
     }
 }
 
@@ -331,10 +369,11 @@ void CLI::printAllUserReservations(const std::vector<const Reservation *> &reser
     std::cout << "--- LISTA PRENOTAZIONI ---\n";
     std::cout << std::endl;
     for (const Reservation *reservation: reservations) {
-        const Airport *departureAirport, *arrivalAirport;
+        if (reservation->getOwnerUserId() != userId)
+            continue;
         const Flight *flight = customerService.getFlight(reservation->getFlightId());
-        departureAirport = customerService.getAirport(flight->getDepartureAirportId());
-        arrivalAirport = customerService.getAirport(flight->getArrivalAirportId());
+        const Airport *departureAirport = customerService.getAirport(flight->getDepartureAirportId());
+        const Airport *arrivalAirport = customerService.getAirport(flight->getArrivalAirportId());
         std::cout << "ID:" << reservation->getId() << std::endl;
         std::cout << "Volo: " << departureAirport->getName() << " --> " << arrivalAirport->getName() << std::endl;
         std::cout << "Orario: " << timepointToString(flight->getDepartureTime()) << " --> " << timePointToString(
@@ -385,10 +424,8 @@ void CLI::manageSingleAirport(const unsigned int id) {
     while (editing) {
         clearScreen();
         const Airport *airport = adminService.getAirport(id);
-        if (airport == nullptr) {
-            std::cout << "Aeroporto con id: " << id << " non trovato\n";
+        if (airport == nullptr)
             return;
-        }
         std::cout << "Aeroporto selezionato:\n";
         std::cout << "ID:" << airport->getId() << "\t";
         std::cout << "IATA:" << airport->getIata() << "\t\t";
@@ -544,7 +581,7 @@ void CLI::createFlightWizard() {
         std::cout << "Volo creato con successo!\n";
     else
         std::cout << "Errore: Impossibile creare il volo\n";
-
+    std::cin.putback('\n');
     waitInput();
 }
 
@@ -553,10 +590,8 @@ void CLI::manageSingleFlight(const unsigned int id) {
     while (editing) {
         clearScreen();
         const Flight *flight = adminService.getFlight(id);
-        if (flight == nullptr) {
-            std::cout << "Volo con id: " << id << " non trovato\n";
+        if (flight == nullptr)
             return;
-        }
 
         std::string departureAirportName = adminService.getAirport(flight->getDepartureAirportId())->getName();
         std::string arrivalAirportName = adminService.getAirport(flight->getArrivalAirportId())->getName();
@@ -589,41 +624,120 @@ void CLI::manageSingleFlight(const unsigned int id) {
         std::cin >> subChoice;
         std::string userInput;
         std::cin.ignore();
+        std::vector<const Airport *> airports = adminService.getAllAirports();
         switch (subChoice) {
             case '1': {
-                std::string formattedIata;
+                std::string departureAirportIdStr;
+                int newdepartureAirportId;
+
+                clearScreen();
+                printAllAirports(airports);
                 do {
-                    std::cout << "Inserisci nuovo id aeroporto di partenza: ";
-                    std::getline(std::cin, userInput);
-                    std::cout << std::endl;
-                    formattedIata = iataFormat(userInput);
-                    if (formattedIata == "")
-                        std::cout << "Il codice IATA deve avere esattemente 3 caratteri!\n";
-                } while (formattedIata == "");
-                //adminService.modifyAirportIATA(airport->getId(), formattedIata);
+                    std::cout << "Inserisci id nuovo aeroporto di partenza: ";
+                    std::cin >> departureAirportIdStr;
+                    newdepartureAirportId = stringToPositiveInteger(departureAirportIdStr);
+                    if (newdepartureAirportId == -1)
+                        std::cout << "Errore: input non valido\n";
+                } while (newdepartureAirportId == -1);
+                bool result = adminService.modifyFlightDepartureAirportId(id, newdepartureAirportId);
+                if (result)
+                    std::cout<<"Aeroporto di partenza modificato correttamente\n";
+                else
+                    std::cout<<"Errore: l'aeroporto con l'id specificato non esiste\n";
+
+                waitInput();
                 break;
             }
-            case '2':
-                std::cout << "Inserisci nuova Nazione: ";
-                std::getline(std::cin, userInput);
-                std::cout << std::endl;
-                //adminService.modifyAirportNation(airport->getId(), userInput);
+            case '2': {
+                std::string arrivalAirportStr;
+                int newArrivalAirportId;
+
+                clearScreen();
+                printAllAirports(airports);
+                do {
+                    std::cout << "Inserisci id aeroporto di arrivo: ";
+                    std::cin >> arrivalAirportStr;
+                    newArrivalAirportId = stringToPositiveInteger(arrivalAirportStr);
+                    if (newArrivalAirportId == -1)
+                        std::cout << "Errore: input non valido\n";
+                } while (newArrivalAirportId == -1);
+                bool result = adminService.modifyFlightArrivalAirportId(id, newArrivalAirportId);
+                if (result)
+                    std::cout<<"Aeroporto di arrivo modificato correttamente\n";
+                else
+                    std::cout<<"Errore: l'aereoporto con l'id specificato non esiste\n";
+
+                waitInput();
                 break;
-            case '3':
-                std::cout << "Inserisci nuova Città: ";
-                std::getline(std::cin, userInput);
-                std::cout << std::endl;
-                //adminService.modifyAirportCity(airport->getId(), userInput);
+            }
+            case '3': {
+                std::optional<std::chrono::system_clock::time_point> optTime;
+                std::string newDepartureTimeDateStr;
+                std::chrono::system_clock::time_point newDepartureTime;
+                do {
+                    std::cout << "Orario di partenza (formato YYYY-MM-DD HH:MM): ";
+                    std::getline(std::cin, newDepartureTimeDateStr);
+                    optTime = stringToTimePoint(newDepartureTimeDateStr);
+                    if (optTime.has_value())
+                        newDepartureTime = optTime.value();
+                    else
+                        std::cout << "Errore: input non valido\n";
+                } while (!optTime.has_value());
+                adminService.modifyFlightDepartureTime(id, newDepartureTime);
                 break;
-            case '4':
-                std::cout << "Inserisci nuovo Nome: ";
-                std::getline(std::cin, userInput);
-                std::cout << std::endl;
-                //adminService.modifyAirportName(airport->getId(), userInput);
+            }
+            case '4': {
+                std::optional<std::chrono::system_clock::time_point> optTime;
+                std::string newArrivalTimeDateStr;
+                std::chrono::system_clock::time_point newArrivalTime;
+                do {
+                    std::cout << "Orario di arrivo (formato YYYY-MM-DD HH:MM): ";
+                    std::getline(std::cin, newArrivalTimeDateStr);
+                    optTime = stringToTimePoint(newArrivalTimeDateStr);
+                    if (optTime.has_value())
+                        newArrivalTime = optTime.value();
+                    else
+                        std::cout << "Errore: input non valido\n";
+                } while (!optTime.has_value());
+                adminService.modifyFlightArrivalTime(id, newArrivalTime);
                 break;
-            case '5':
-                std::cout << "Aeroporto eliminato!\n";
-                adminService.deleteAirport(id);
+            }
+            case '5': {
+                std::string newPriceStr;
+                float newPrice;
+                do {
+                    std::cout << "Inserisci nuovo prezzo: \n";
+                    std::cin >> newPriceStr;
+                    newPrice = stringToFloat(newPriceStr);
+                    if (newPrice == -1)
+                        std::cout << "Errore: input non valido\n";
+                }while (newPrice == -1);
+                adminService.modifyFlightPrice(id, newPrice);
+                std::cout<<"Prezzo modificato con successo\n";
+                waitInput();
+                break;
+            }
+            case '6': {
+                std::string newSeatsStr;
+                int newSeats;
+                unsigned int bookedSeats = adminService.getFlight(id)->getBookedSeats();
+                do {
+                    std::cout << "Inserisci nuovo quantitativo di posti: ";
+                    std::cin >> newSeatsStr;
+                    newSeats = stringToPositiveInteger(newSeatsStr);
+                    if (newSeats == -1)
+                        std::cout << "Errore: input non valido\n";
+                    if (newSeats < bookedSeats)
+                        std::cout << "Errore: i posti prenotati superano il nuovo numero di posti\n";
+                } while (newSeats == -1 || newSeats < bookedSeats);
+                adminService.modifyFlightTotalSeats(id, newSeats);
+                std::cout<<"Numero posti modificato correttamente\n";
+                waitInput();
+                break;
+            }
+            case '7':
+                adminService.deleteFlight(flight->getId());
+                std::cout << "Volo eliminato!\n";
                 editing = false;
                 break;
             case '0':
@@ -691,8 +805,6 @@ void CLI::adminFlightsMenu() {
             int id = stringToPositiveInteger(choice);
 
             if (id == -1) {
-                std::cout << "Errore: ID non valido o input errato.\n\n";
-                waitInput();
                 continue;
             }
 
@@ -769,7 +881,6 @@ UserStruct CLI::login() const {
     return result;
 }
 
-//todo (non qui) wait a customer quando stampa il menu
 
 std::string CLI::iataFormat(std::string iata) {
     if (iata.length() != 3)

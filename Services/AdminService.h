@@ -21,14 +21,10 @@ explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, 
         airportRepo(airportRepo),
         flightRepo(flightRepo) {}
 
-
-    //void modifyUserPassword(unsigned int userId) const;
-
     std::vector<const User *> getAllUsers() const;
     const User* getUser(unsigned int userId) const;
     void modifyUserName(unsigned int userId, const std::string & newName) const;
     void modifyUserEmail(unsigned int userId, const std::string & newEmail) const;
-    void modifyUserLevel(unsigned int userId, const std::string & newLevel);
     void deleteUser(unsigned int userId) const;
 
     bool createAirport(const std::string& iata, const std::string& nation, const std::string& city, const std::string& name) const;
@@ -41,19 +37,19 @@ explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, 
     void deleteAirport(unsigned int airportId) const;
 
 
-    bool createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
-        const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats);
-    std::vector<const Flight *> getAllFlights();
-    const Flight* getFlight(unsigned int flightId);
+    bool createFlight(unsigned int departureAirportId, unsigned int arrivalAirportId,
+        const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, float price, unsigned int totalSeats) const;
+    std::vector<const Flight *> getAllFlights() const;
+    const Flight* getFlight(unsigned int flightId) const;
     bool modifyFlightDepartureAirportId(unsigned int flightId, unsigned int newDepartureAirportId) const;
     bool modifyFlightArrivalAirportId(unsigned int flightId, unsigned int newArrivalAirportId) const;
-    bool modifyFlightDepartureTime(unsigned int flightId, std::string newDepartureTime) const;
-    bool modifyFlightArrivalTime(unsigned int flightId, std::string newArrivalTime) const;
+    void modifyFlightDepartureTime(unsigned int flightId, const std::chrono::system_clock::time_point &newDepartureTime) const;
+    void modifyFlightArrivalTime(unsigned int flightId, const std::chrono::system_clock::time_point &newArrivalTime) const;
     void modifyFlightPrice(unsigned int flightId, float newPrice) const;
     void modifyFlightTotalSeats(unsigned int flightId, unsigned int newTotalSeats) const;
     void deleteFlight(unsigned int flightId) const;
 
-    void close() {
+    void close() const {
         airportRepo.write();
         flightRepo.write();
     }
