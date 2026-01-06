@@ -11,8 +11,10 @@
 
 
 std::string CLI::timepointToString(std::chrono::system_clock::time_point tp) {
-    std::string timeDateStr = std::format("{:%Y-%m-%d %H:%M}", tp);
-    return timeDateStr;
+    std::time_t t = std::chrono::system_clock::to_time_t(tp);
+    std::stringstream timeDateString;
+    timeDateString << std::put_time(std::gmtime(&t), "%Y-%m-%d %H:%M");
+    return timeDateString.str();
 }
 
 void CLI::clearScreen() const {
