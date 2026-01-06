@@ -30,6 +30,15 @@ public:
     void setUsages(const unsigned int usages) { this-> usages = usages; }
 
     Airport(unsigned int id, const std::string &iata, const std::string &nation, const std::string &city,
+            const std::string &name, unsigned int usages)
+        : id(id),
+          name(name),
+          nation(nation),
+          city(city),
+          iata(iata),
+          usages(usages){
+    }
+    Airport(unsigned int id, const std::string &iata, const std::string &nation, const std::string &city,
             const std::string &name)
         : id(id),
           name(name),

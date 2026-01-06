@@ -476,12 +476,24 @@ void CLI::manageSingleAirport(const unsigned int id) {
                 std::cout << std::endl;
                 adminService.modifyAirportName(airport->getId(), userInput);
                 break;
-            case '5':
+            case '5': {
+                unsigned int airportUsages = adminService.getAirport(id)->getUsages();
+                if (airportUsages != 0){
+                    std::cout << "L'aeroporto viene usato in " << airportUsages << " voli, cancellare a cascata?\n Y/N ";
+                    std::string choice;
+                    std::cin>>choice;
+                    if (choice != "y" && choice != "Y") {
+                        std::cout << "Aeroporto non eliminato!\n";
+                        waitInput();
+                        break;
+                    }
+                }
                 adminService.deleteAirport(id);
                 std::cout << "Aeroporto eliminato!\n";
                 editing = false;
                 waitInput();
                 break;
+            }
             case '0':
                 editing = false;
                 break;

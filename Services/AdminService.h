@@ -7,6 +7,7 @@
 #include "../Domain/Flight.h"
 #include "../Repositories/AirportRepository.h"
 #include "../Repositories/FlightRepository.h"
+#include "../Repositories/ReservationRepository.h"
 #include "../Repositories/UserRepository.h"
 
 
@@ -14,12 +15,14 @@ class AdminService {
     UserRepository& userRepo;
     AirportRepository& airportRepo;
     FlightRepository& flightRepo;
+    ReservationRepository& reservationRepo;
 
 public:
-explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, FlightRepository &flightRepo)
+explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, FlightRepository &flightRepo, ReservationRepository &reservationRepo)
         : userRepo(userRepo),
         airportRepo(airportRepo),
-        flightRepo(flightRepo) {}
+        flightRepo(flightRepo),
+        reservationRepo(reservationRepo) {}
 
     std::vector<const User *> getAllUsers() const;
     const User* getUser(unsigned int userId) const;
@@ -48,6 +51,8 @@ explicit AdminService(UserRepository &userRepo, AirportRepository &airportRepo, 
     void modifyFlightPrice(unsigned int flightId, float newPrice) const;
     void modifyFlightTotalSeats(unsigned int flightId, unsigned int newTotalSeats) const;
     void deleteFlight(unsigned int flightId) const;
+
+    void deleteReservation(unsigned int reservationId) const;
 
     void close() const {
         airportRepo.write();

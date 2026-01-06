@@ -19,7 +19,9 @@ void AirportRepository::write() {
     std::fstream file = openFile(path, std::ios::out | std::ios::binary | std::ios::trunc);
     for (const auto &airport: airports) {
         unsigned int id = airport->getId();
+        unsigned int usages = airport->getUsages();
         file.write(reinterpret_cast<const char *>(&id), sizeof(id));
+        file.write(reinterpret_cast<const char *>(&usages), sizeof(usages));
         writeBinaryString(file, airport->getIata());
         writeBinaryString(file, airport->getNation());
         writeBinaryString(file, airport->getCity());
@@ -37,11 +39,15 @@ void AirportRepository::load() {
         file.read(reinterpret_cast<char *>(&id), sizeof(id));
         if (file.fail())
             break;
+        unsigned int usages;
+        file.read(reinterpret_cast<char *>(&usages), sizeof(usages));
+        if (file.fail())
+            break;
         std::string iata = readBinaryString(file);
         std::string nation = readBinaryString(file);
         std::string city = readBinaryString(file);
         std::string name = readBinaryString(file);
-        airports.emplace_back(std::make_unique<Airport>(id, iata, nation, city, name));
+        airports.emplace_back(std::make_unique<Airport>(id, iata, nation, city, name, usages));
         largestId = std::max(largestId, id);
     }
     idGen.setStartingId(largestId);

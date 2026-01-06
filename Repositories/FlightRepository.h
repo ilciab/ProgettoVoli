@@ -6,6 +6,7 @@
 #define PROGETTOVOLI_FLIGHTREPOSITORY_H
 #include "RepositoryInterface.h"
 #include "../Domain/Flight.h"
+#include "../Utils/IdGenerator.h"
 
 
 class FlightRepository : public RepositoryInterface<Flight> {

@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+
 std::vector<const User *> AdminService::getAllUsers() const { return userRepo.getAll(); }
 const User *AdminService::getUser(const unsigned int userId) const { return userRepo.getById(userId); }
 
@@ -29,7 +30,18 @@ void AdminService::modifyAirportNation(const unsigned int airportId, const std::
 void AdminService::modifyAirportCity(const unsigned int airportId, const std::string &newCity) const { airportRepo.setAirportCity(airportId, newCity); }
 void AdminService::modifyAirportIATA(const unsigned int airportId, const std::string &newIata) const { airportRepo.setAirportIata(airportId, newIata); }
 
-void AdminService::deleteAirport(const unsigned int airportId) const { airportRepo.remove(airportId); }
+void AdminService::deleteAirport(const unsigned int airportId) const {
+    const std::vector<const Flight*> flights = flightRepo.getAll();
+    for (const Flight *flight : flights) {
+        const unsigned int departureAirportId = flight->getDepartureAirportId();
+        if (const unsigned int arrivalAirportId = flight->getArrivalAirportId(); departureAirportId == airportId || arrivalAirportId == airportId) {
+            const unsigned int flightId = flight->getId();
+            deleteFlight(flightId);
+        }
+    }
+
+    airportRepo.remove(airportId);
+}
 
 bool AdminService::createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
                                 const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price, const unsigned int totalSeats) const {
@@ -85,10 +97,22 @@ void AdminService::modifyFlightPrice(const unsigned int flightId, const float ne
 void AdminService::modifyFlightTotalSeats(const unsigned int flightId, const unsigned int newTotalSeats) const { flightRepo.setFlightTotalSeats(flightId, newTotalSeats); }
 void AdminService::deleteFlight(const unsigned int flightId) const {
     const Flight *flight = flightRepo.getById(flightId);
-    unsigned int departureAirportId = flight->getDepartureAirportId();
-    unsigned int arrivalAirportId = flight->getArrivalAirportId();
+    const unsigned int departureAirportId = flight->getDepartureAirportId();
+    const unsigned int arrivalAirportId = flight->getArrivalAirportId();
     airportRepo.decreaseUsages(departureAirportId);
     airportRepo.decreaseUsages(arrivalAirportId);
-    flightRepo.remove(flightId);
+    const std::vector<const Reservation*> reservations = reservationRepo.getAll();
+    std::vector<unsigned int> reservationsIdToDelete;
+    for (const Reservation *reservation : reservations) {
+        if (reservation->getFlightId() == flightId)
+            reservationsIdToDelete.push_back(reservation->getId());
+    }
 
+    for (const unsigned int reservationId : reservationsIdToDelete)
+        deleteReservation(reservationId);
+    flightRepo.remove(flightId);
+}
+
+void AdminService::deleteReservation(const unsigned int reservationId) const {
+    reservationRepo.remove(reservationId);
 }

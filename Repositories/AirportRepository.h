@@ -8,6 +8,7 @@
 
 #include "RepositoryInterface.h"
 #include "../Domain/Airport.h"
+#include "../Utils/IdGenerator.h"
 
 
 class AirportRepository : public RepositoryInterface<Airport>{

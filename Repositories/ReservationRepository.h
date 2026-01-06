@@ -29,9 +29,7 @@ public:
     unsigned int createReservation(const unsigned int ownerUserId, const unsigned int flightId);
 
     void remove(unsigned id) override;
-
     void write() override;
-
     void load() override;
 
     std::vector<const Reservation *> getAll() override;

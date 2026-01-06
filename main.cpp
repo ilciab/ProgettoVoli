@@ -10,7 +10,7 @@ int main() {
     FlightRepository flightRepo(std::string("flights"));
     ReservationRepository reservationRepo(std::string("reservations"));
     AuthService authService(userRepo);
-    AdminService adminService(userRepo, airportRepo, flightRepo);
+    AdminService adminService(userRepo, airportRepo, flightRepo, reservationRepo);
     CustomerService customerService(airportRepo, flightRepo, reservationRepo, userRepo);
     CLI cli(authService, adminService, customerService);
     cli.loginMenu();
