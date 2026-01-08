@@ -14,13 +14,13 @@ std::fstream openFile(const std::string& path, const std::ios::openmode& mode) {
 }
 
 void writeBinaryString(std::fstream &file, const std::string &str) {
-    size_t length = str.length();
+    uint32_t length = str.length();
     file.write(reinterpret_cast<const char *>(&length), sizeof(length));
     file.write(str.data(), length);
 }
 
 std::string readBinaryString(std::fstream &file) {
-    size_t length = 0;
+    uint32_t length = 0;
 
     file.read(reinterpret_cast<char *>(&length), sizeof(length));
 
@@ -34,15 +34,15 @@ std::string readBinaryString(std::fstream &file) {
 }
 
 std::string timePointToString(const std::chrono::system_clock::time_point &tp) {
-    std::time_t t = std::chrono::system_clock::to_time_t(tp);
+    const std::time_t t = std::chrono::system_clock::to_time_t(tp);
     std::stringstream ss;
-    ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M");
+    ss << std::put_time(std::gmtime(&t), "%Y-%m-%d %H:%M");
     return ss.str();
 }
 
 int stringToPositiveInteger(const std::string &string) {
     try {
-        int result = std::stoi(string);
+        const int result = std::stoi(string);
         if (result < 0)
             return -1;
         return result;

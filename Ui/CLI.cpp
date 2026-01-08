@@ -291,6 +291,9 @@ void CLI::manageSingleUser(unsigned int id) {
             case 3:
                 std::cout << "Utente eliminato\n";
                 adminService.deleteUser(user->getId());
+                waitInput();
+                running = false;
+                break;
             case 0:
                 running = false;
                 break;
@@ -517,6 +520,7 @@ void CLI::createFlightWizard() {
 
     if (airports.size() < 2) {
         std::cout << "Errore: devono esistere almeno 2 aeroporti\n";
+        waitInput();
         return;
     }
 
@@ -808,7 +812,7 @@ void CLI::adminFlightsMenu() {
         std::cout << " 0 - Indietro\n";
         std::cin >> choice;
 
-        if (choice == "0") return;
+        if (choice == "0")return;
 
         if (choice == "n") {
             createFlightWizard();

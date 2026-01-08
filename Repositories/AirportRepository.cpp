@@ -67,7 +67,7 @@ unsigned int AirportRepository::createAirport(const std::string &iata, const std
     return id;
 }
 
-const Airport *AirportRepository::<getById(const unsigned int id) const {
+const Airport *AirportRepository::getById(const unsigned int id) const {
     for (const auto &airport: airports) {
         if (airport->getId() == id)
             return airport.get();
