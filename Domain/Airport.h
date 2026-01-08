@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/16/25.
-//
 
 #ifndef PROGETTOVOLI_AIRPORT_H
 #define PROGETTOVOLI_AIRPORT_H

@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 24/09/2025.
-//
 
 #ifndef CLI_H
 #define CLI_H

@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 22/09/2025.
-//
 
 #ifndef USER_H
 #define USER_H

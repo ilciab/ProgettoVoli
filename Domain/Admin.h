@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 30/09/2025.
-//
 
 #ifndef ADMIN_H
 #define ADMIN_H

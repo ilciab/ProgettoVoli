@@ -35,4 +35,7 @@ add_executable(ProgettoVoli main.cpp
         Repositories/ReservationRepository.cpp
         Repositories/ReservationRepository.h
         Enums/AuthResponse.h
+        Factories/UserFactory.h
+        Builders/FlightBuilder.cpp
+        Builders/FlightBuilder.h
 )

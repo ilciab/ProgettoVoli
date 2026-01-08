@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/14/25.
-//
 
 #ifndef PROGETTOVOLI_LOGINRESULT_H
 #define PROGETTOVOLI_LOGINRESULT_H

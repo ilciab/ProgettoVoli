@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/20/25.
-//
 
 #ifndef PROGETTOVOLI_REPOSITORYUTILS_H
 #define PROGETTOVOLI_REPOSITORYUTILS_H

@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/26/25.
-//
 
 #include "RepositoryUtils.h"
 #include <iomanip>

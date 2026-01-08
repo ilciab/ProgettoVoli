@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 12/17/25.
-//
 
 #ifndef PROGETTOVOLI_AUTHRESPONSE_H
 #define PROGETTOVOLI_AUTHRESPONSE_H

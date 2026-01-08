@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 12/4/25.
-//
 
 #ifndef PROGETTOVOLI_RESERVATIONREPOSITORY_H
 #define PROGETTOVOLI_RESERVATIONREPOSITORY_H
@@ -11,7 +8,7 @@
 #include "../Utils/IdGenerator.h"
 
 
-class ReservationRepository : public RepositoryInterface<Reservation>{
+class ReservationRepository final : public RepositoryInterface<Reservation>{
 
     Reservation * getById_internal(unsigned id) override;
     std::vector<std::unique_ptr<Reservation>> reservations;

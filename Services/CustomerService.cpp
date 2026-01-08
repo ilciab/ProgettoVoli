@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 03/12/2025.
-//
 
 #include "CustomerService.h"
 

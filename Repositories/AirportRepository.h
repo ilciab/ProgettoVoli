@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/16/25.
-//
 
 #ifndef PROGETTOVOLI_AIRPORTREPOSITORY_H
 #define PROGETTOVOLI_AIRPORTREPOSITORY_H
@@ -11,7 +8,7 @@
 #include "../Utils/IdGenerator.h"
 
 
-class AirportRepository : public RepositoryInterface<Airport>{
+class AirportRepository final : public RepositoryInterface<Airport>{
     std::vector<std::unique_ptr<Airport>> airports;
     std::string path;
     IdGenerator idGen;

@@ -1,12 +1,10 @@
-//
-// Created by ilciab on 11/20/25.
-//
 
 #include "FlightRepository.h"
 
 #include <fstream>
 #include <iostream>
 
+#include "../Builders/FlightBuilder.h"
 #include "../Utils/RepositoryUtils.h"
 
 Flight *FlightRepository::getById_internal(const unsigned int id) {
@@ -84,9 +82,19 @@ void FlightRepository::load() {
         auto arrivalTime = std::chrono::system_clock::time_point(std::chrono::seconds(arrivalSeconds));
         if (file.fail())
             break;
+        Flight flight = FlightBuilder()
+                    .setId(id)
+                    .setDepartureAirportId(departureAirportId)
+                    .setArrivalAirportId(arrivalAirportId)
+                    .setDepartureTime(departureTime)
+                    .setArrivalTime(arrivalTime)
+                    .setPrice(price)
+                    .setTotalSeats(totalSeats)
+                    .setBookedSeats(bookedSeats)
+                    .build();
 
-        flights.emplace_back(std::make_unique<Flight>(id, departureAirportId, arrivalAirportId, departureTime,
-                                                      arrivalTime, price, totalSeats, bookedSeats));
+        flights.push_back(std::make_unique<Flight>(flight));
+
 
         largestId = std::max(largestId, id);
     }
@@ -129,9 +137,20 @@ void FlightRepository::setFlightTotalSeats(unsigned int flightId, unsigned int t
 unsigned int FlightRepository::createFlight(const unsigned int departureAirportId, const unsigned int arrivalAirportId,
     const std::chrono::system_clock::time_point &departureTime, const std::chrono::system_clock::time_point &arrivalTime, const float price,
     const unsigned int totalSeats) {
-    unsigned int id = idGen.getNextId();
-    flights.emplace_back(std::make_unique<Flight>(id, departureAirportId, arrivalAirportId,
-        departureTime, arrivalTime, price, totalSeats));
+    const unsigned int id = idGen.getNextId();
+
+    Flight newFlight = FlightBuilder()
+                        .setId(id)
+                        .setDepartureAirportId(departureAirportId)
+                        .setArrivalAirportId(arrivalAirportId)
+                        .setDepartureTime(departureTime)
+                        .setArrivalTime(arrivalTime)
+                        .setPrice(price)
+                        .setTotalSeats(totalSeats)
+                        // Niente setBookedSeats: usa il default (0)
+                        .build();
+
+    flights.push_back(std::make_unique<Flight>(newFlight));
     return id;
 }
 

@@ -1,5 +1,3 @@
-//// Created by ciabu on 23/09/2025.
-//
 
 #ifndef IDGENERATOR_H
 #define IDGENERATOR_H

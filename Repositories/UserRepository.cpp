@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 23/09/2025.
-//
 
 #include "UserRepository.h"
 
@@ -10,16 +7,18 @@
 #include <sstream>
 
 #include "../Domain/Admin.h"
+#include "../Factories/UserFactory.h"
 #include "../Services/AuthService.h"
 #include "../Utils/RepositoryUtils.h"
 
 
 void UserRepository::createDefaultAdmin(const unsigned int largestId) {
+    AdminFactory adminFactory;
     std::string defaultAdminName = "Admin";
     std::string defaultAdminEmail = "admin";
     std::string defaultAdminPassword = "admin";
     std::string hashedPassword = AuthService::hashPassword(defaultAdminPassword);
-    users.emplace_back(std::make_unique<Admin>(largestId+1, defaultAdminName, defaultAdminEmail, hashedPassword));
+    users.push_back(adminFactory.createUser(largestId+1, defaultAdminName, defaultAdminEmail, hashedPassword));
 }
 
 
@@ -43,7 +42,7 @@ void UserRepository::load() {
         } catch (std::exception&) {
             continue;
         }
-        users.emplace_back(std::make_unique<Customer>(id,name,email,hashedPassword));
+        users.push_back(customerFactory.createUser(id,name,email,hashedPassword));
         largestId = std::max(largestId, id);
     }
 
@@ -59,7 +58,7 @@ void UserRepository::load() {
         if (!idStr.empty() && !name.empty() && !email.empty() && !hashedPassword.empty()) {
             try {
                 unsigned int id = std::stoul(idStr);
-                users.emplace_back(std::make_unique<Admin>(id,name,email,hashedPassword));
+                users.push_back(adminFactory.createUser(id, name, email, hashedPassword));
                 largestId = std::max(largestId, id);
                 adminLoaded = true;
             } catch (...) {}

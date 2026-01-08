@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/20/25.
-//
 
 #ifndef PROGETTOVOLI_FLIGHTREPOSITORY_H
 #define PROGETTOVOLI_FLIGHTREPOSITORY_H
@@ -9,7 +6,7 @@
 #include "../Utils/IdGenerator.h"
 
 
-class FlightRepository : public RepositoryInterface<Flight> {
+class FlightRepository final : public RepositoryInterface<Flight> {
 
     std::vector<std::unique_ptr<Flight> > flights;
     Flight *getById_internal(unsigned int id) override;

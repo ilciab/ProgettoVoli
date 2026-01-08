@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 11/16/25.
-//
 
 #ifndef PROGETTOVOLI_VOLO_H
 #define PROGETTOVOLI_VOLO_H

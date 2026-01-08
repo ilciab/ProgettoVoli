@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 23/09/2025.
-//
 
 #ifndef IREPOSITORY_H
 #define IREPOSITORY_H

@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 23/09/2025.
-//
 
 #ifndef USERREPOSITORY_H
 #define USERREPOSITORY_H
@@ -8,13 +5,16 @@
 
 #include "RepositoryInterface.h"
 #include "../Domain/Customer.h"
+#include "../Factories/UserFactory.h"
 #include "../Utils/IdGenerator.h"
 
 
-class UserRepository : public RepositoryInterface<User> {
+class UserRepository final : public RepositoryInterface<User> {
     std::vector<std::unique_ptr<User> > users; //per gestione automatica e sennò si perde il rifeirmento
     std::string customerPath, adminPath;
     IdGenerator idGen;
+    AdminFactory adminFactory;
+    CustomerFactory customerFactory;
     User *getById_internal(unsigned int id) override;
 
 public:

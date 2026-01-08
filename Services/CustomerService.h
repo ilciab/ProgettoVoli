@@ -1,6 +1,3 @@
-//
-// Created by ciabu on 03/12/2025.
-//
 
 #ifndef CUSTOMERSERVICE_H
 #define CUSTOMERSERVICE_H

@@ -1,6 +1,4 @@
-//
-// Created by ciabu on 30/09/2025.
-//
+
 
 #ifndef CLIENT_H
 #define CLIENT_H

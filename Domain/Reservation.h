@@ -1,6 +1,3 @@
-//
-// Created by ilciab on 12/4/25.
-//
 
 #ifndef PROGETTOVOLI_RESERVATION_H
 #define PROGETTOVOLI_RESERVATION_H
