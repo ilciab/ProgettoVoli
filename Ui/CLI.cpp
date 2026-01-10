@@ -68,16 +68,16 @@ void CLI::customerBookingsMenu() {
     } while (ticketsNumber == -1 or ticketsNumber > freeSeats);
 
     std::cout << "Totale: $" << adminService.getFlight(selectedFlightId)->getPrice() * ticketsNumber << std::endl;
-    std::cout << "Aquistare? Y/N ";
+    std::cout << "Acquistare? Y/N ";
     std::cin >> choice;
     if (choice == "y" or choice == "Y") {
         bool bookResult = customerService.book(userStruct.id, selectedFlightId, ticketsNumber);
         if (bookResult == true)
-            std::cout << "Volo aquistato.\n";
+            std::cout << "Volo acquistato.\n";
         else
             std::cout << "Errore nell'acquistare il volo\n";
     } else
-        std::cout << "Volo non aquistato.\n";
+        std::cout << "Volo non acquistato.\n";
     waitInput();
 }
 
@@ -546,9 +546,6 @@ void CLI::createFlightWizard() {
         else
             std::cout << "Errore: input non valido\n";
     } while (!optTime.has_value());
-
-    clearScreen();
-    printAllAirports(airports);
 
     do {
         std::cout << "Id aeroporto di arrivo: ";
