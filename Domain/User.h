@@ -9,7 +9,9 @@
 class User {
 protected:
     const unsigned int id;
-    std::string name, email, hashedPassword;
+    std::string name;
+    std::string email;
+    std::string hashedPassword;
 
 public:
     virtual ~User() = default;

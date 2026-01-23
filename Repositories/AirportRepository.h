@@ -12,6 +12,7 @@ class AirportRepository final : public RepositoryInterface<Airport>{
     std::vector<std::unique_ptr<Airport>> airports;
     std::string path;
     IdGenerator idGen;
+    Airport *getById_internal(unsigned int id) override;
 
 public:
     explicit AirportRepository(const std::string &path)
@@ -24,7 +25,6 @@ public:
     void load() override;
 
     const Airport* getById(unsigned int id) const override;
-    Airport *getById_internal(unsigned int id) override;
     const Airport* getByIata(const std::string& iata) const;
     std::vector<const Airport *> getAll() override;
 
